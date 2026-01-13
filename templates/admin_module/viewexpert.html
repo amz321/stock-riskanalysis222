@@ -1,0 +1,386 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="exp-wrapper">
+    <div class="exp-container">
+      <div class="exp-card">
+        <!-- Header -->
+        <div class="exp-header">
+          <h2 class="exp-title">Expert List</h2>
+          <a href="/myapp/add_expert#about" class="exp-btn-add">
+            <span>Add New Expert</span>
+          </a>
+        </div>
+
+        <!-- Table -->
+        <div class="exp-body">
+          <div class="exp-table-wrapper">
+            <table class="exp-table">
+              <thead>
+                <tr>
+                  <th>SI. No</th>
+                  <th>Name</th>
+                  <th>Photo</th>
+                  <th>Address</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th colspan="2" class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in data %}
+                <tr class="exp-row">
+                  <td>{{ forloop.counter }}</td>
+                  <td class="exp-name">{{ i.name }}</td>
+                  <td class="exp-photo">
+                    <div class="exp-img-wrapper">
+                      <img src="{{ i.photo.url }}" alt="{{ i.name }}" class="exp-img">
+                    </div>
+                  </td>
+                  <td class="exp-address">
+                    {{ i.place }}<br>
+                    {{ i.district }}<br>
+                    {{ i.pincode }}
+                  </td>
+                  <td class="exp-email">{{ i.email }}</td>
+                  <td class="exp-phone">{{ i.phone }}</td>
+                  <td class="exp-action">
+                    <a href="/myapp/edit_expert/{{ i.id }}#about" class="exp-btn exp-btn-edit">
+                      Edit
+                    </a>
+                  </td>
+                  <td class="exp-action">
+                    <a href="/myapp/delete_expert/{{ i.LOGIN.id }}"
+                       class="exp-btn exp-btn-delete"
+                       onclick="return confirm('Are you sure you want to delete this expert?');">
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="8" class="exp-empty">
+                    <div class="exp-empty-state">
+                      <p>No experts found.</p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (exp- prefix) ============== -->
+<style>
+  :root {
+    --exp-bg: #f8f9fa;
+    --exp-surface: #ffffff;
+    --exp-primary: #ff6d00;
+    --exp-primary-light: #ff8a00;
+    --exp-success: #28a745;
+    --exp-danger: #dc3545;
+    --exp-text: #212529;
+    --exp-muted: #6c757d;
+    --exp-border: #dee2e6;
+    --exp-shadow: 0 16px 40px rgba(0,0,0,.12);
+    --exp-radius: 1.3rem;
+    --exp-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .exp-wrapper {
+    min-height: 100vh;
+    background: var(--exp-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .exp-container {
+    max-width: 1350px;
+    margin: 0 auto;
+  }
+
+  .exp-card {
+    background: var(--exp-surface);
+    border-radius: var(--exp-radius);
+    overflow: hidden;
+    box-shadow: var(--exp-shadow);
+    animation: expFadeIn 0.7s ease-out;
+  }
+
+  /* Header */
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.2rem 2.5rem;
+    background: var(--exp-grad);
+    color: white;
+    position: relative;
+  }
+
+  .exp-title {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .exp-btn-add {
+    background: rgba(255,255,255,.2);
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 1.6rem;
+    border-radius: 0.8rem;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all .3s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,.2);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,.3);
+  }
+
+  .exp-btn-add:hover {
+    background: white;
+    color: var(--exp-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  }
+
+  .exp-btn-add span::before {
+    content: "+ ";
+    font-weight: 900;
+  }
+
+  /* Body */
+  .exp-body {
+    padding: 2.5rem;
+  }
+
+  .exp-table-wrapper {
+    overflow-x: auto;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  }
+
+  .exp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.96rem;
+  }
+
+  .exp-table th {
+    background: #f8f9fa;
+    color: var(--exp-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    padding: 1.3rem 1rem;
+    text-align: left;
+    border-bottom: 2.5px solid var(--exp-primary);
+  }
+
+  .exp-table td {
+    padding: 1.4rem 1rem;
+    border-bottom: 1px solid var(--exp-border);
+    vertical-align: middle;
+  }
+
+  .exp-row:hover {
+    background: linear-gradient(90deg, #fff8f0 0%, #ffffff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .1);
+    transition: all 0.25s ease;
+  }
+
+  .exp-name {
+    font-weight: 600;
+    color: var(--exp-text);
+    font-size: 1.06rem;
+  }
+
+  .exp-img-wrapper {
+    width: 92px;
+    height: 92px;
+    overflow: hidden;
+    border-radius: 1.1rem;
+    box-shadow: 0 5px 14px rgba(0,0,0,.16);
+    border: 4px solid white;
+    transition: all .3s ease;
+  }
+
+  .exp-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+  }
+
+  .exp-img-wrapper:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 12px 28px rgba(0,0,0,.22);
+  }
+
+  .exp-img-wrapper:hover .exp-img {
+    transform: scale(1.25);
+  }
+
+  .exp-address,
+  .exp-email,
+  .exp-phone {
+    color: var(--exp-muted);
+    line-height: 1.6;
+    font-size: 0.94rem;
+  }
+
+  .exp-action {
+    text-align: center;
+  }
+
+  .exp-btn {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    margin: 0.2rem;
+    border-radius: 0.7rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    min-width: 68px;
+    transition: all .25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
+  }
+
+  .exp-btn-edit {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+  }
+
+  .exp-btn-edit:hover {
+    background: #ffc107;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .exp-btn-delete {
+    background: #f8d7da;
+    color: var(--exp-danger);
+    border: 1px solid #f5c6cb;
+  }
+
+  .exp-btn-delete:hover {
+    background: var(--exp-danger);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .exp-empty {
+    padding: 3.5rem 1rem !important;
+    text-align: center;
+  }
+
+  .exp-empty-state p {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--exp-muted);
+    font-style: italic;
+  }
+
+  @keyframes expFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .exp-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+    .exp-title { font-size: 1.7rem; }
+  }
+
+  @media (max-width: 768px) {
+    .exp-table,
+    .exp-table thead,
+    .exp-table tbody,
+    .exp-table th,
+    .exp-table td,
+    .exp-table tr {
+      display: block;
+    }
+
+    .exp-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .exp-row {
+      border: 1px solid var(--exp-border);
+      border-radius: 1rem;
+      margin-bottom: 1.6rem;
+      padding: 1.6rem;
+      background: white;
+      box-shadow: 0 6px 20px rgba(0,0,0,.09);
+    }
+
+    .exp-row td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+      padding-top: 0.9rem;
+      padding-bottom: 0.9rem;
+    }
+
+    .exp-row td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 1.3rem;
+      width: 45%;
+      font-weight: 600;
+      color: var(--exp-primary);
+      text-align: left;
+    }
+
+    .exp-photo,
+    .exp-action {
+      padding-left: 1.3rem !important;
+    }
+
+    .exp-photo::before { content: "Photo:"; }
+    .exp-action::before { content: "Action:"; }
+
+    .exp-action {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+  }
+</style>
+
+<!-- Mobile data-labels -->
+<script>
+  document.querySelectorAll('.exp-row td').forEach(td => {
+    const headers = ['SI. No', 'Name', 'Photo', 'Address', 'Email', 'Phone', 'Edit', 'Delete'];
+    const index = Array.from(td.parentNode.children).indexOf(td);
+    if (index < headers.length) {
+      td.setAttribute('data-label', headers[index]);
+    }
+  });
+</script>
+
+{% endblock %}

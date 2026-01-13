@@ -1,0 +1,52 @@
+{% extends 'expert/expert_index.html' %}
+{% block body %}
+<body class="bg-light py-5">
+    <div class="container">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">User Directory</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Place</th>
+                                <th scope="col">Pincode</th>
+                                <th scope="col">District</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in data %}
+                            <tr>
+                                <td>{{ i.name }}</td>
+                                <td>{{ i.email }}</td>
+{#                                <td>#}
+{#                                    <img src="{{ i.photo.url }}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;">#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    {{ i.place }}<br>#}
+{#                                    {{ i.district }}<br>#}
+{#                                    {{ i.pincode }}#}
+{#                                </td>#}
+                                <td>{{ i.phone }}</td>
+                                <td>{{ i.place }}</td>
+                                <td>{{ i.pincode }}</td>
+                                <td>{{ i.district }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No experts available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

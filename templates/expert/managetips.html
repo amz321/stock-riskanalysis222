@@ -1,0 +1,345 @@
+{% extends 'expert/expert_index.html' %}
+{% block body %}
+
+<body>
+  <div class="etip-wrapper">
+    <div class="etip-container">
+      <div class="etip-card">
+        <!-- Header -->
+        <div class="etip-header">
+          <h2 class="etip-title">Expert Tips</h2>
+          <a href="/myapp/Add_newtip#about" class="etip-btn-add">
+            Add New
+          </a>
+        </div>
+
+        <!-- Table -->
+        <div class="etip-body">
+          <div class="etip-table-wrapper">
+            <table class="etip-table">
+              <thead>
+                <tr>
+                  <th>Tips</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in data %}
+                <tr class="etip-row">
+                  <td class="etip-tip-title">{{ i.tiptitle }}</td>
+                  <td class="etip-desc">{{ i.description }}</td>
+                  <td class="etip-date">{{ i.date }}</td>
+                  <td class="etip-action">
+                    <a href="/myapp/delete_tip/{{ i.id }}/" 
+                       class="etip-btn etip-btn-delete"
+                       onclick="return confirm('Delete this tip?');">
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="etip-empty">
+                    <div class="etip-empty-state">
+                      <p>No tips added yet.</p>
+                      <a href="/myapp/Add_newtip" class="etip-btn-add-small">
+                        Add Your First Tip
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (etip- prefix) ============== -->
+<style>
+  :root {
+    --etip-bg: #f8f9fa;
+    --etip-surface: #ffffff;
+    --etip-primary: #ff6d00;
+    --etip-primary-light: #ff8a00;
+    --etip-danger: #dc3545;
+    --etip-text: #212529;
+    --etip-muted: #6c757d;
+    --etip-border: #dee2e6;
+    --etip-shadow: 0 16px 48px rgba(0,0,0,.12);
+    --etip-radius: 1.4rem;
+    --etip-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .etip-wrapper {
+    min-height: 100vh;
+    background: var(--etip-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .etip-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .etip-card {
+    background: var(--etip-surface);
+    border-radius: var(--etip-radius);
+    overflow: hidden;
+    box-shadow: var(--etip-shadow);
+    animation: etipFadeIn 0.7s ease-out;
+  }
+
+  /* Header */
+  .etip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.2rem 2.5rem;
+    background: var(--etip-grad);
+    color: white;
+  }
+
+  .etip-title {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .etip-btn-add {
+    background: rgba(255,255,255,.25);
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 1.6rem;
+    border-radius: 0.8rem;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all .3s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,.2);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,.3);
+  }
+
+  .etip-btn-add::before {
+    content: "+";
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+
+  .etip-btn-add:hover {
+    background: white;
+    color: var(--etip-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  }
+
+  /* Body */
+  .etip-body {
+    padding: 2.5rem;
+  }
+
+  .etip-table-wrapper {
+    overflow-x: auto;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  }
+
+  .etip-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.96rem;
+  }
+
+  .etip-table th {
+    background: #f8f9fa;
+    color: var(--etip-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    padding: 1.3rem 1rem;
+    text-align: left;
+    border-bottom: 2.5px solid var(--etip-primary);
+  }
+
+  .etip-table td {
+    padding: 1.4rem 1rem;
+    border-bottom: 1px solid var(--etip-border);
+    vertical-align: middle;
+  }
+
+  .etip-row:hover {
+    background: linear-gradient(90deg, #fff8f0 0%, #ffffff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .1);
+    transition: all 0.25s ease;
+  }
+
+  .etip-tip-title {
+    font-weight: 600;
+    color: var(--etip-text);
+    font-size: 1.06rem;
+  }
+
+  .etip-desc {
+    color: var(--etip-muted);
+    line-height: 1.6;
+    max-width: 400px;
+    word-wrap: break-word;
+  }
+
+  .etip-date {
+    color: var(--etip-muted);
+    font-size: 0.94rem;
+  }
+
+  .etip-action {
+    text-align: center;
+  }
+
+  .etip-btn {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    margin: 0.2rem;
+    border-radius: 0.7rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    min-width: 68px;
+    transition: all .25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
+  }
+
+  .etip-btn-delete {
+    background: #f8d7da;
+    color: var(--etip-danger);
+    border: 1px solid #f5c6cb;
+  }
+
+  .etip-btn-delete:hover {
+    background: var(--etip-danger);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .etip-empty {
+    padding: 4rem 1rem !important;
+    text-align: center;
+  }
+
+  .etip-empty-state p {
+    margin: 0 0 1.5rem;
+    font-size: 1.15rem;
+    color: var(--etip-muted);
+    font-style: italic;
+  }
+
+  .etip-btn-add-small {
+    background: var(--etip-grad);
+    color: white;
+    text-decoration: none;
+    padding: 0.7rem 1.8rem;
+    border-radius: 0.8rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-block;
+    transition: all .3s ease;
+    box-shadow: 0 6px 16px rgba(255, 109, 0, .3);
+  }
+
+  .etip-btn-add-small:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(255, 109, 0, .4);
+  }
+
+  @keyframes etipFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .etip-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+    .etip-title { font-size: 1.7rem; }
+  }
+
+  @media (max-width: 768px) {
+    .etip-table,
+    .etip-table thead,
+    .etip-table tbody,
+    .etip-table th,
+    .etip-table td,
+    .etip-table tr {
+      display: block;
+    }
+
+    .etip-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .etip-row {
+      border: 1px solid var(--etip-border);
+      border-radius: 1rem;
+      margin-bottom: 1.6rem;
+      padding: 1.6rem;
+      background: white;
+      box-shadow: 0 6px 20px rgba(0,0,0,.09);
+    }
+
+    .etip-row td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+      padding-top: 0.9rem;
+      padding-bottom: 0.9rem;
+    }
+
+    .etip-row td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 1.3rem;
+      width: 45%;
+      font-weight: 600;
+      color: var(--etip-primary);
+      text-align: left;
+    }
+
+    .etip-action {
+      padding-left: 1.3rem !important;
+    }
+
+    .etip-action::before { content: "Action:"; }
+  }
+</style>
+
+<!-- Mobile data-labels -->
+<script>
+  document.querySelectorAll('.etip-row td').forEach(td => {
+    const headers = ['Tip Title', 'Description', 'Date', 'Action'];
+    const index = Array.from(td.parentNode.children).indexOf(td);
+    if (index < headers.length) {
+      td.setAttribute('data-label', headers[index] + ':');
+    }
+  });
+</script>
+
+{% endblock %}

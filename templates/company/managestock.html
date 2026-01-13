@@ -1,0 +1,578 @@
+{% extends 'company/company_index.html' %}
+{% block body %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management</title>
+    <style>
+        .stock-mgmt-reset * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .stock-mgmt-body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .stock-mgmt-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stock-mgmt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stock-mgmt-header h1 {
+            color: #1a1a1a;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .stock-mgmt-btn-add {
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+        }
+
+        .stock-mgmt-btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 119, 0, 0.4);
+        }
+
+        .stock-mgmt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 10px;
+        }
+
+        .stock-mgmt-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .stock-mgmt-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #ff9933;
+        }
+
+        .stock-mgmt-card-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #ffe4cc 0%, #ffd4b3 100%);
+        }
+
+        .stock-mgmt-card-content {
+            padding: 25px;
+        }
+
+        .stock-mgmt-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .stock-mgmt-card-title {
+            font-size: 1.5em;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stock-mgmt-card-price {
+            font-size: 1.8em;
+            color: #ff7700;
+            font-weight: 800;
+        }
+
+        .stock-mgmt-card-details {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .stock-mgmt-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stock-mgmt-btn-edit {
+            flex: 1;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .stock-mgmt-btn-edit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+        }
+
+        .stock-mgmt-btn-delete {
+            flex: 1;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .stock-mgmt-btn-delete:hover {
+            background: #000;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .stock-mgmt-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .stock-mgmt-modal.stock-mgmt-active {
+            display: flex;
+        }
+
+        .stock-mgmt-modal-content {
+            background: white;
+            padding: 45px;
+            border-radius: 25px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: stock-mgmt-slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes stock-mgmt-slideIn {
+            from {
+                transform: translateY(-80px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .stock-mgmt-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #ffe4cc;
+        }
+
+        .stock-mgmt-modal-header h2 {
+            color: #1a1a1a;
+            font-size: 2.2em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stock-mgmt-modal-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .stock-mgmt-close {
+            background: #f5f5f5;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-weight: 300;
+        }
+
+        .stock-mgmt-close:hover {
+            background: #ff7700;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .stock-mgmt-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .stock-mgmt-form-group {
+            margin-bottom: 25px;
+        }
+
+        .stock-mgmt-form-group.stock-mgmt-full-width {
+            grid-column: 1 / -1;
+        }
+
+        .stock-mgmt-form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 1em;
+            letter-spacing: 0.3px;
+        }
+
+        .stock-mgmt-form-group input,
+        .stock-mgmt-form-group textarea,
+        .stock-mgmt-form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fafafa;
+        }
+
+        .stock-mgmt-form-group input:focus,
+        .stock-mgmt-form-group textarea:focus,
+        .stock-mgmt-form-group select:focus {
+            outline: none;
+            border-color: #ff9933;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .stock-mgmt-form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .stock-mgmt-form-group input[type="file"] {
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .stock-mgmt-modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .stock-mgmt-btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+        }
+
+        .stock-mgmt-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 119, 0, 0.4);
+        }
+
+        .stock-mgmt-btn-cancel {
+            flex: 1;
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #e0e0e0;
+            padding: 16px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .stock-mgmt-btn-cancel:hover {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        .stock-mgmt-empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            color: #666;
+        }
+
+        .stock-mgmt-empty-state h2 {
+            font-size: 2em;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .stock-mgmt-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .stock-mgmt-header h1 {
+                font-size: 2em;
+            }
+
+            .stock-mgmt-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stock-mgmt-form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .stock-mgmt-modal-content {
+                padding: 30px 25px;
+            }
+
+            .stock-mgmt-modal-header h2 {
+                font-size: 1.6em;
+            }
+
+            .stock-mgmt-modal-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body class="stock-mgmt-body">
+    <div class="stock-mgmt-reset">
+        <div class="stock-mgmt-container">
+            <div class="stock-mgmt-header">
+                <h1>Stock Management</h1>
+                <button class="stock-mgmt-btn-add" onclick="stockMgmt.openAddModal()">+ Add Stock</button>
+            </div>
+
+            <div class="stock-mgmt-grid" id="stockMgmtGrid">
+                <!-- Stock cards will be inserted here -->
+                {% for item in data %}
+                <div class="stock-mgmt-card">
+                    <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="stock-mgmt-card-img">
+                    <div class="stock-mgmt-card-content">
+                        <div class="stock-mgmt-card-header">
+                            <h3 class="stock-mgmt-card-title">{{ item.name }}</h3>
+                            <span class="stock-mgmt-card-price">₹{{ item.price }}</span>
+                        </div>
+                        <p class="stock-mgmt-card-details">{{ item.details }}</p>
+                        <div class="stock-mgmt-card-actions">
+                            <button class="stock-mgmt-btn-edit" onclick="stockMgmt.openEditModal({{ item.id }}, '{{ item.name }}', '{{ item.photo.url }}', {{ item.price }}, '{{ item.details }}', {{ item.COMPANY.id }})">Edit</button>
+                            <a href="/myapp/CompanyDeleteStock/{{item.id}}/" class="stock-mgmt-btn-delete" >Delete</a>
+                        </div>
+                        <div class="stock-mgmt-card-actions" style="margin-top:20px;">
+                            <a href="/myapp/CompanyDailyUpdateStock/{{item.id}}/" class="stock-mgmt-btn-edit" >Daily Update</a>
+
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Add Modal -->
+            <div class="stock-mgmt-modal" id="stockMgmtAddModal">
+                <div class="stock-mgmt-modal-content">
+                    <div class="stock-mgmt-modal-header">
+                        <h2>
+                            <span class="stock-mgmt-modal-icon">+</span>
+                            Add New Stock
+                        </h2>
+                        <button class="stock-mgmt-close" onclick="stockMgmt.closeAddModal()">&times;</button>
+                    </div>
+                    <form id="stockMgmtAddForm" action="/myapp/CompanyAddStock/" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="stock-mgmt-form-row">
+                            <div class="stock-mgmt-form-group">
+                                <label for="stockMgmtAddName">Product Name</label>
+                                <input type="text" id="stockMgmtAddName" name="name" placeholder="Enter product name" required>
+                            </div>
+
+                            <div class="stock-mgmt-form-group">
+                                <label for="stockMgmtAddPrice">Price (₹)</label>
+                                <input type="number" id="stockMgmtAddPrice" name="price" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <div class="stock-mgmt-form-row">
+
+
+                            <div class="stock-mgmt-form-group stock-mgmt-full-width">
+                            <label for="stockMgmtAddDetails">Product Details</label>
+                            <textarea id="stockMgmtAddDetails" name="details" placeholder="Enter product description and details" required></textarea>
+                        </div>
+                        </div>
+
+                        <div class="stock-mgmt-modal-actions">
+                            <button type="submit" class="stock-mgmt-btn-submit">Add Stock Item</button>
+                            <button type="button" class="stock-mgmt-btn-cancel" onclick="stockMgmt.closeAddModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Modal -->
+            <div class="stock-mgmt-modal" id="stockMgmtEditModal">
+                <div class="stock-mgmt-modal-content">
+                    <div class="stock-mgmt-modal-header">
+                        <h2>
+                            <span class="stock-mgmt-modal-icon">✎</span>
+                            Edit Stock
+                        </h2>
+                        <button class="stock-mgmt-close" onclick="stockMgmt.closeEditModal()">&times;</button>
+                    </div>
+                    <form id="stockMgmtEditForm" method="POST" action="/myapp/CompanyEditStock/" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" id="stockMgmtEditStockId" name="id">
+
+                        <div class="stock-mgmt-form-row">
+                            <div class="stock-mgmt-form-group">
+                                <label for="stockMgmtEditName">Product Name</label>
+                                <input type="text" id="stockMgmtEditName" name="name" placeholder="Enter product name" required>
+                            </div>
+
+                            <div class="stock-mgmt-form-group">
+                                <label for="stockMgmtEditPrice">Price (₹)</label>
+                                <input type="number" id="stockMgmtEditPrice" name="price" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <div class="stock-mgmt-form-row">
+
+                             <div class="stock-mgmt-form-group stock-mgmt-full-width">
+                            <label for="stockMgmtEditDetails">Product Details</label>
+                            <textarea id="stockMgmtEditDetails" name="details" placeholder="Enter product description and details" required></textarea>
+                        </div>
+
+
+                        </div>
+
+
+
+                        <div class="stock-mgmt-modal-actions">
+                            <button type="submit" class="stock-mgmt-btn-submit">Update Stock</button>
+                            <button type="button" class="stock-mgmt-btn-cancel" onclick="stockMgmt.closeEditModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stockMgmt = {
+            openAddModal: function() {
+                document.getElementById('stockMgmtAddForm').reset();
+                document.getElementById('stockMgmtAddModal').classList.add('stock-mgmt-active');
+            },
+
+            closeAddModal: function() {
+                document.getElementById('stockMgmtAddModal').classList.remove('stock-mgmt-active');
+            },
+
+            openEditModal: function(id, name, photo, price, details, ) {
+                document.getElementById('stockMgmtEditStockId').value = id;
+                document.getElementById('stockMgmtEditName').value = name;
+                document.getElementById('stockMgmtEditPrice').value = price;
+                document.getElementById('stockMgmtEditDetails').value = details;
+                document.getElementById('stockMgmtEditModal').classList.add('stock-mgmt-active');
+            },
+
+            closeEditModal: function() {
+                document.getElementById('stockMgmtEditModal').classList.remove('stock-mgmt-active');
+            },
+
+            deleteStock: function(id) {
+                if (confirm('Are you sure you want to delete this stock item?')) {
+
+                    // Add your delete logic here
+                    // This would typically be an AJAX call to your Django backend
+                    console.log('Deleting stock with ID:', id);
+                    // Example: window.location.href = '/delete-stock/' + id;
+                }
+            }
+        };
+
+        // Close modals when clicking outside
+        document.getElementById('stockMgmtAddModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                stockMgmt.closeAddModal();
+            }
+        });
+
+        document.getElementById('stockMgmtEditModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                stockMgmt.closeEditModal();
+            }
+        });
+    </script>
+</body>
+{% endblock %}}

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile</title>
+    <style>
+        .company-profile-reset * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .company-profile-body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .company-profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .company-profile-header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            z-index: 0;
+        }
+
+        .company-profile-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: flex-end;
+            gap: 30px;
+        }
+
+        .company-profile-photo-wrapper {
+            position: relative;
+        }
+
+        .company-profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            background: white;
+        }
+
+        .company-profile-info {
+            flex: 1;
+            color: white;
+            padding-bottom: 10px;
+        }
+
+        .company-profile-name {
+            font-size: 2.5em;
+            color:grey;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .company-profile-since {
+            font-size: 1.2em;
+            opacity: 0.95;
+            color:black;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .company-profile-btn-update {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: white;
+            color: #ff7700;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .company-profile-btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .company-profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .company-profile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .company-profile-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .company-profile-card-title {
+            color: #ff7700;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .company-profile-card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            border-radius: 2px;
+        }
+
+        .company-profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .company-profile-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .company-profile-label {
+            color: #666;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .company-profile-value {
+            color: #1a1a1a;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .company-profile-map-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            grid-column: 1 / -1;
+        }
+
+        .company-profile-map {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            background: #f0f0f0;
+            margin-top: 20px;
+        }
+
+        .company-profile-documents {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            grid-column: 1 / -1;
+        }
+
+        .company-profile-doc-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .company-profile-doc-item:hover {
+            background: #ffe4cc;
+            transform: translateX(5px);
+        }
+
+        .company-profile-doc-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-profile-doc-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .company-profile-btn-download {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .company-profile-btn-download:hover {
+            background: #ff7700;
+            transform: scale(1.05);
+        }
+
+        /* Modal Styles */
+        .company-profile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .company-profile-modal.company-profile-active {
+            display: flex;
+        }
+
+        .company-profile-modal-content {
+            background: white;
+            padding: 45px;
+            border-radius: 25px;
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: company-profile-slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes company-profile-slideIn {
+            from {
+                transform: translateY(-80px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .company-profile-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #ffe4cc;
+        }
+
+        .company-profile-modal-header h2 {
+            color: #1a1a1a;
+            font-size: 2.2em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-profile-modal-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .company-profile-close {
+            background: #f5f5f5;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-weight: 300;
+        }
+
+        .company-profile-close:hover {
+            background: #ff7700;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .company-profile-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .company-profile-form-group {
+            margin-bottom: 25px;
+        }
+
+        .company-profile-form-group.company-profile-full-width {
+            grid-column: 1 / -1;
+        }
+
+        .company-profile-form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 1em;
+            letter-spacing: 0.3px;
+        }
+
+        .company-profile-form-group input,
+        .company-profile-form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fafafa;
+        }
+
+        .company-profile-form-group input:focus,
+        .company-profile-form-group select:focus {
+            outline: none;
+            border-color: #ff9933;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .company-profile-form-group input[type="file"] {
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .company-profile-modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .company-profile-btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+        }
+
+        .company-profile-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 119, 0, 0.4);
+        }
+
+        .company-profile-btn-cancel {
+            flex: 1;
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #e0e0e0;
+            padding: 16px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .company-profile-btn-cancel:hover {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 968px) {
+            .company-profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .company-profile-header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .company-profile-info {
+                color: #1a1a1a;
+                padding-top: 120px;
+            }
+
+            .company-profile-btn-update {
+                position: static;
+                margin-top: 20px;
+            }
+
+            .company-profile-form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .company-profile-modal-content {
+                padding: 30px 25px;
+            }
+        }
+      .inv-back-button {
+            background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%); /* Orange gradient */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-left: 20px;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .inv-back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+        }
+</style>
+    </head>
+
+<body class="company-profile-body">
+<button class="inv-back-button" onclick="history.back()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Back
+            </button>
+    <div class="company-profile-reset">
+        <div class="company-profile-container">
+            <!-- Profile Header -->
+            <div class="company-profile-header">
+                <button class="company-profile-btn-update" onclick="companyProfile.openUpdateModal()">
+                    ✎ Update Profile
+                </button>
+                <div class="company-profile-header-content">
+                    <div class="company-profile-photo-wrapper">
+                        <img src="{{ company.photo.url }}" alt="{{ company.name }}" class="company-profile-photo">
+                    </div>
+                    <div class="company-profile-info">
+                        <h1 class="company-profile-name">{{ company.name }}</h1>
+                        <p class="company-profile-since">
+                            <span>📅</span>
+                            Established Since {{ company.sinceyear }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details Grid -->
+            <div class="company-profile-grid">
+                <!-- Contact Information -->
+                <div class="company-profile-card">
+                    <h2 class="company-profile-card-title">Contact Information</h2>
+                    <div class="company-profile-info-row">
+                        <span class="company-profile-label">Email</span>
+                        <span class="company-profile-value">{{ company.email }}</span>
+                    </div>
+                    <div class="company-profile-info-row">
+                        <span class="company-profile-label">Phone</span>
+                        <span class="company-profile-value">{{ company.phone }}</span>
+                    </div>
+                </div>
+
+                <!-- Location Information -->
+                <div class="company-profile-card">
+                    <h2 class="company-profile-card-title">Location Details</h2>
+                    <div class="company-profile-info-row">
+                        <span class="company-profile-label">Place</span>
+                        <span class="company-profile-value">{{ company.place }}</span>
+                    </div>
+                    <div class="company-profile-info-row">
+                        <span class="company-profile-label">District</span>
+                        <span class="company-profile-value">{{ company.district }}</span>
+                    </div>
+                    <div class="company-profile-info-row">
+                        <span class="company-profile-label">State</span>
+                        <span class="company-profile-value">{{ company.state }}</span>
+                    </div>
+                    <div class="company-profile-info-row">
+                        <span class="company-profile-label">Pincode</span>
+                        <span class="company-profile-value">{{ company.pincode }}</span>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="company-profile-documents">
+                    <h2 class="company-profile-card-title">Company Documents</h2>
+                    <div class="company-profile-doc-item">
+                        <div class="company-profile-doc-info">
+                            <div class="company-profile-doc-icon">📄</div>
+                            <div>
+                                <h3 style="color: #1a1a1a; font-weight: 600; margin-bottom: 5px;">Verification Proof</h3>
+                                <p style="color: #666; font-size: 0.9em;">Company verification document</p>
+                            </div>
+                        </div>
+                        <a href="{{ company.proof.url }}" download class="company-profile-btn-download">Download</a>
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div class="company-profile-map-container">
+                    <h2 class="company-profile-card-title">Location Map</h2>
+                    <div class="company-profile-map" id="companyMap">
+                        <!-- Map will be rendered here -->
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            frameborder="0"
+                            style="border:0; border-radius: 10px;"
+                            src="https://www.google.com/maps?q={{ company.latitude }},{{ company.longtitude }}&output=embed"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Modal -->
+            <div class="company-profile-modal" id="companyUpdateModal">
+                <div class="company-profile-modal-content">
+                    <div class="company-profile-modal-header">
+                        <h2>
+                            <span class="company-profile-modal-icon">✎</span>
+                            Update Company Profile
+                        </h2>
+                        <button class="company-profile-close" onclick="companyProfile.closeModal()">&times;</button>
+                    </div>
+                    <form id="companyUpdateForm" method="POST" action="/myapp/CompanyUpdateProfile/" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="company-profile-form-row">
+                            <div class="company-profile-form-group">
+                                <label for="companyName">Company Name</label>
+                                <input type="text" id="companyName" name="name" value="{{ company.name }}" required>
+                            </div>
+
+                            <div class="company-profile-form-group">
+                                <label for="companySinceYear">Since Year</label>
+                                <input type="number" id="companySinceYear" name="sinceyear" value="{{ company.sinceyear }}" required>
+                            </div>
+                        </div>
+
+                        <div class="company-profile-form-row">
+                            <div class="company-profile-form-group">
+                                <label for="companyEmail">Email Address</label>
+                                <input type="email" id="companyEmail" name="email" value="{{ company.email }}" required>
+                            </div>
+
+                            <div class="company-profile-form-group">
+                                <label for="companyPhone">Phone Number</label>
+                                <input type="tel" id="companyPhone" name="phone" value="{{ company.phone }}" required>
+                            </div>
+                        </div>
+
+                        <div class="company-profile-form-row">
+                            <div class="company-profile-form-group">
+                                <label for="companyPlace">Place</label>
+                                <input type="text" id="companyPlace" name="place" value="{{ company.place }}" required>
+                            </div>
+
+                            <div class="company-profile-form-group">
+                                <label for="companyPincode">Pincode</label>
+                                <input type="number" id="companyPincode" name="pincode" value="{{ company.pincode }}" required>
+                            </div>
+                        </div>
+
+                        <div class="company-profile-form-row">
+                            <div class="company-profile-form-group">
+                                <label for="companyDistrict">District</label>
+                                <input type="text" id="companyDistrict" name="district" value="{{ company.district }}" required>
+                            </div>
+
+                            <div class="company-profile-form-group">
+                                <label for="companyState">State</label>
+                                <input type="text" id="companyState" name="state" value="{{ company.state }}" required>
+                            </div>
+                        </div>
+
+
+
+                        <div class="company-profile-form-row">
+                            <div class="company-profile-form-group">
+                                <label for="companyPhoto">Company Photo (optional)</label>
+                                <input type="file" id="companyPhoto" name="photo" accept="image/*">
+                            </div>
+
+                            <div class="company-profile-form-group">
+                                <label for="companyProof">Verification Proof (optional)</label>
+                                <input type="file" id="companyProof" name="proof">
+                            </div>
+                        </div>
+
+                        <div class="company-profile-modal-actions">
+                            <button type="submit" class="company-profile-btn-submit">Update Profile</button>
+                            <button type="button" class="company-profile-btn-cancel" onclick="companyProfile.closeModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const companyProfile = {
+            openUpdateModal: function() {
+                document.getElementById('companyUpdateModal').classList.add('company-profile-active');
+            },
+
+            closeModal: function() {
+                document.getElementById('companyUpdateModal').classList.remove('company-profile-active');
+            }
+        };
+
+        // Close modal when clicking outside
+        document.getElementById('companyUpdateModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                companyProfile.closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+{% extends 'expert/expert_index.html' %}
+{% block body %}
+
+<body>
+  <div class="epro-wrapper">
+    <div class="epro-container">
+      <div class="epro-card">
+        <div class="epro-header">
+          <div class="epro-photo">
+            <img src="{{ data.photo.url }}" alt="Expert Photo" class="epro-img">
+          </div>
+          <h2 class="epro-name">{{ data.name }}</h2>
+          <p class="epro-role">Stock Market Expert</p>
+        </div>
+
+        <div class="epro-body">
+          <div class="epro-info">
+            <div class="epro-info-item">
+              <span class="epro-label">Email</span>
+              <span class="epro-value">{{ data.email }}</span>
+            </div>
+            <div class="epro-info-item">
+              <span class="epro-label">Phone</span>
+              <span class="epro-value">{{ data.phone }}</span>
+            </div>
+            <div class="epro-info-item">
+              <span class="epro-label">Address</span>
+              <span class="epro-value">
+                {{ data.place }}<br>
+                {{ data.district }}<br>
+                {{ data.pincode }}
+              </span>
+            </div>
+          </div>
+
+          <div class="epro-actions">
+            <button class="epro-btn-update" id="openUpdateModal">
+              Update Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Modal -->
+  <div class="epro-modal" id="updateModal">
+    <div class="epro-modal-content">
+      <div class="epro-modal-header">
+        <h3>Update Profile</h3>
+        <button class="epro-close" id="closeModal">×</button>
+      </div>
+
+      <form action="/myapp/UpdateProfile/" method="post" enctype="multipart/form-data" class="epro-form" novalidate>
+        {% csrf_token %}
+
+        <div class="epro-modal-body">
+          <!-- Photo -->
+          <div class="epro-field epro-field-photo">
+            <label class="epro-label">Current Photo</label>
+            <div class="epro-current-photo">
+              <img src="{{ data.photo.url }}" alt="Current" id="currentPhoto">
+            </div>
+            <label class="epro-label">Update Photo</label>
+            <input type="file" name="photo" accept="image/*" class="epro-input epro-input-file">
+            <div class="epro-preview" id="photoPreview"></div>
+          </div>
+
+          <!-- Name + Email -->
+          <div class="epro-row">
+            <div class="epro-field">
+              <label class="epro-label">Name <span class="epro-req">*</span></label>
+              <input type="text" name="Name" value="{{ data.name }}" class="epro-input" required>
+              <span class="epro-error"></span>
+            </div>
+            <div class="epro-field">
+              <label class="epro-label">Email <span class="epro-req">*</span></label>
+              <input type="email" name="email" value="{{ data.email }}" class="epro-input" required>
+              <span class="epro-error"></span>
+            </div>
+          </div>
+
+          <!-- Phone + Place -->
+          <div class="epro-row">
+            <div class="epro-field">
+              <label class="epro-label">Phone <span class="epro-req">*</span></label>
+              <input type="text" name="phone" value="{{ data.phone }}" class="epro-input" pattern="[0-9]{10}" required>
+              <span class="epro-error"></span>
+            </div>
+            <div class="epro-field">
+              <label class="epro-label">Place <span class="epro-req">*</span></label>
+              <input type="text" name="Place" value="{{ data.place }}" class="epro-input" required>
+              <span class="epro-error"></span>
+            </div>
+          </div>
+
+          <!-- Pincode + District -->
+          <div class="epro-row">
+            <div class="epro-field">
+              <label class="epro-label">Pincode <span class="epro-req">*</span></label>
+              <input type="text" name="Pincode" value="{{ data.pincode }}" class="epro-input" pattern="[0-9]{6}" required>
+              <span class="epro-error"></span>
+            </div>
+            <div class="epro-field">
+              <label class="epro-label">District <span class="epro-req">*</span></label>
+              <input type="text" name="District" value="{{ data.district }}" class="epro-input" required>
+              <span class="epro-error"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="epro-modal-footer">
+          <button type="button" class="epro-btn-cancel" id="cancelModal">Cancel</button>
+          <button type="submit" class="epro-btn-submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (epro- prefix) ============== -->
+<style>
+  :root {
+    --epro-bg: #f8f9fa;
+    --epro-surface: #ffffff;
+    --epro-primary: #ff6d00;
+    --epro-primary-light: #ff8a00;
+    --epro-success: #28a745;
+    --epro-danger: #dc3545;
+    --epro-text: #212529;
+    --epro-muted: #6c757d;
+    --epro-border: #dee2e6;
+    --epro-shadow: 0 18px 50px rgba(0, 0, 0, 0.14);
+    --epro-radius: 1.5rem;
+    --epro-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .epro-wrapper {
+    min-height: 100vh;
+    background: var(--epro-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .epro-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .epro-card {
+    background: var(--epro-surface);
+    border-radius: var(--epro-radius);
+    overflow: hidden;
+    box-shadow: var(--epro-shadow);
+    animation: eproFadeIn 0.7s ease-out;
+  }
+
+  .epro-header {
+    text-align: center;
+    padding: 2.5rem 2rem 2rem;
+    background: var(--epro-grad);
+    color: white;
+    position: relative;
+  }
+
+  .epro-photo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid white;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  }
+
+  .epro-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .epro-name {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 700;
+  }
+
+  .epro-role {
+    margin: 0.5rem 0 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .epro-body {
+    padding: 2.5rem;
+  }
+
+  .epro-info {
+    margin-bottom: 2rem;
+  }
+
+  .epro-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--epro-border);
+  }
+
+  .epro-info-item:last-child {
+    border-bottom: none;
+  }
+
+  .epro-label {
+    font-weight: 600;
+    color: var(--epro-muted);
+    flex: 1;
+  }
+
+  .epro-value {
+    flex: 2;
+    text-align: right;
+    color: var(--epro-text);
+    font-weight: 500;
+  }
+
+  .epro-actions {
+    text-align: center;
+  }
+
+  .epro-btn-update {
+    background: white;
+    color: var(--epro-primary);
+    border: 2px solid var(--epro-primary);
+    padding: 0.9rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: var(--epro-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 18px rgba(255, 109, 0, 0.2);
+  }
+
+  .epro-btn-update:hover {
+    background: var(--epro-primary);
+    color: white;
+    transform: translateY(-3px);
+  }
+
+  /* Modal */
+  .epro-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .epro-modal.active {
+    display: flex;
+  }
+
+  .epro-modal-content {
+    background: var(--epro-surface);
+    border-radius: var(--epro-radius);
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--epro-shadow);
+    animation: modalFadeIn 0.4s ease-out;
+  }
+
+  .epro-modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--epro-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .epro-modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .epro-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--epro-muted);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+
+  .epro-close:hover {
+    background: #f1f3f5;
+    color: var(--epro-danger);
+  }
+
+  .epro-modal-body {
+    padding: 2rem;
+  }
+
+  .epro-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .epro-field {
+    flex: 1;
+    min-width: 280px;
+    position: relative;
+  }
+
+  .epro-field-photo {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .epro-current-photo {
+    margin: 1rem 0;
+  }
+
+  #currentPhoto {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid var(--epro-border);
+  }
+
+  .epro-preview img {
+    max-width: 140px;
+    max-height: 140px;
+    border-radius: 50%;
+    margin-top: 1rem;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+  }
+
+  .epro-input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid var(--epro-border);
+    border-radius: calc(var(--epro-radius) / 1.5);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .epro-input:focus {
+    outline: none;
+    border-color: var(--epro-primary);
+    box-shadow: 0 0 0 5px rgba(255, 109, 0, 0.18);
+  }
+
+  .epro-input.error {
+    border-color: var(--epro-danger);
+  }
+
+  .epro-error {
+    color: var(--epro-danger);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+  }
+
+  .epro-modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--epro-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .epro-btn-cancel,
+  .epro-btn-submit {
+    padding: 0.8rem 1.8rem;
+    border-radius: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .epro-btn-cancel {
+    background: #f8f9fa;
+    color: var(--epro-text);
+    border: 1px solid var(--epro-border);
+  }
+
+  .epro-btn-cancel:hover {
+    background:: #e9ecef;
+  }
+
+  .epro-btn-submit {
+    background: var(--epro-grad);
+    color: white;
+    border: none;
+    box-shadow: 0 6px 18px rgba(255, 109, 0, 0.3);
+  }
+
+  .epro-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(255, 109, 0, 0.4);
+  }
+
+  @keyframes eproFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @media (max-width: 768px) {
+    .epro-row { flex-direction: column; }
+    .epro-field { min-width: 100%; }
+    .epro-modal-footer { flex-direction: column; }
+    .epro-btn-cancel, .epro-btn-submit { width: 100%; }
+  }
+</style>
+
+<!-- ============== MODAL & VALIDATION SCRIPT ============== -->
+<script>
+  const modal = document.getElementById('updateModal');
+  const openBtn = document.getElementById('openUpdateModal');
+  const closeBtn = document.getElementById('closeModal');
+  const cancelBtn = document.getElementById('cancelModal');
+
+  openBtn.onclick = () => modal.classList.add('active');
+  closeBtn.onclick = cancelBtn.onclick = () => modal.classList.remove('active');
+  window.onclick = (e) => { if (e.target === modal) modal.classList.remove('active'); }
+
+  // Photo preview
+  document.querySelector('input[name="photo"]').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('photoPreview');
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => preview.innerHTML = `<img src="${e.target.result}" alt="New Photo">`;
+      reader.readAsDataURL(file);
+    } else {
+      preview.innerHTML = '';
+    }
+  });
+
+  // Real-time validation
+  const inputs = document.querySelectorAll('.epro-input');
+  inputs.forEach(input => {
+    input.addEventListener('input', validateField);
+  });
+
+  function validateField(e) {
+    const field = e.target;
+    const error = field.parentElement.querySelector('.epro-error');
+    const value = field.value.trim();
+
+    field.classList.remove('error');
+    if (error) error.textContent = '';
+
+    if (!value && field.hasAttribute('required')) {
+      showError(field, 'Required');
+      return;
+    }
+
+    if (field.type === 'email' && value) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        showError(field, 'Invalid email');
+        return;
+      }
+    }
+
+    if (field.name === 'phone' && value) {
+      if (!/^\d{10}$/.test(value)) {
+        showError(field, '10 digits only');
+        return;
+      }
+    }
+
+    if (field.name === 'Pincode' && value) {
+      if (!/^\d{6}$/.test(value)) {
+        showError(field, '6 digits only');
+        return;
+      }
+    }
+  }
+
+  function showError(field, msg) {
+    field.classList.add('error');
+    const error = field.parentElement.querySelector('.epro-error');
+    if (error) error.textContent = msg;
+  }
+
+  // Prevent submit if invalid
+  document.querySelector('.epro-form').addEventListener('submit', function(e) {
+    let valid = true;
+    inputs.forEach(input => {
+      if (!input.value.trim() && input.hasAttribute('required')) {
+        validateField({ target: input });
+        valid = false;
+      }
+    });
+    if (!valid) {
+      e.preventDefault();
+      alert('Please fill all required fields correctly.');
+    }
+  });
+</script>
+
+{% endblock %}

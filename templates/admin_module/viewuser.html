@@ -1,0 +1,310 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="udir-wrapper">
+    <div class="udir-container">
+      <div class="udir-card">
+        <!-- Header -->
+        <div class="udir-header">
+          <h2 class="udir-title">User Directory</h2>
+          <div class="udir-subtitle">All Registered Users</div>
+        </div>
+
+        <!-- Table -->
+        <div class="udir-body">
+          <div class="udir-table-wrapper">
+            <table class="udir-table">
+              <thead>
+                <tr>
+                  <th>SI. No</th>
+                  <th>Name</th>
+                  <th>Photo</th>
+                  <th>Address</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in data %}
+                <tr class="udir-row">
+                  <td class="udir-sino">{{ forloop.counter }}</td>
+                  <td class="udir-name">{{ i.name }}</td>
+                  <td class="udir-photo">
+                    <div class="udir-photo-wrapper">
+                      <img src="{{ i.photo.url }}" alt="{{ i.name }}" class="udir-img">
+                    </div>
+                  </td>
+                  <td class="udir-address">
+                    <div>{{ i.place }}</div>
+                    <div>{{ i.district }}</div>
+                    <div class="udir-pin">{{ i.pincode }}</div>
+                  </td>
+                  <td class="udir-email">{{ i.email }}</td>
+                  <td class="udir-phone">{{ i.phone }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="udir-empty">
+                    <div class="udir-empty-state">
+                      <p>No experts registered yet.</p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (udir- prefix) ============== -->
+<style>
+  :root {
+    --udir-bg: #f8f9fa;
+    --udir-surface: #ffffff;
+    --udir-primary: #ff6d00;
+    --udir-primary-light: #ff8a00;
+    --udir-text: #212529;
+    --udir-muted: #6c757d;
+    --udir-border: #dee2e6;
+    --udir-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+    --udir-radius: 1.5rem;
+    --udir-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .udir-wrapper {
+    min-height: 100vh;
+    background: var(--udir-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .udir-container {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .udir-card {
+    background: var(--udir-surface);
+    border-radius: var(--udir-radius);
+    overflow: hidden;
+    box-shadow: var(--udir-shadow);
+    animation: udirFadeIn 0.7s ease-out;
+  }
+
+  /* Header */
+  .udir-header {
+    padding: 2.5rem 3rem;
+    background: var(--udir-grad);
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+
+  .udir-title {
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .udir-subtitle {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  /* Body */
+  .udir-body {
+    padding: 2.5rem 3rem;
+  }
+
+  .udir-table-wrapper {
+    overflow-x: auto;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  }
+
+  .udir-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.96rem;
+  }
+
+  .udir-table th {
+    background: #f8f9fa;
+    color: var(--udir-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    padding: 1.4rem 1rem;
+    text-align: left;
+    border-bottom: 2.5px solid var(--udir-primary);
+  }
+
+  .udir-table td {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid var(--udir-border);
+    vertical-align: middle;
+  }
+
+  .udir-row:hover {
+    background: linear-gradient(90deg, #fff8f0 0%, #ffffff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .1);
+    transition: all 0.25s ease;
+  }
+
+  .udir-sino {
+    font-weight: 600;
+    color: var(--udir-primary);
+    font-size: 1.05rem;
+  }
+
+  .udir-name {
+    font-weight: 600;
+    color: var(--udir-text);
+    font-size: 1.06rem;
+  }
+
+  .udir-photo-wrapper {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+    transition: all 0.3s ease;
+  }
+
+  .udir-row:hover .udir-photo-wrapper {
+    transform: scale(1.15);
+    box-shadow: 0 12px 32px rgba(255, 109, 0, .25);
+  }
+
+  .udir-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .udir-address {
+    color: var(--udir-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .udir-pin {
+    font-weight: 600;
+    color: var(--udir-text);
+  }
+
+  .udir-email,
+  .udir-phone {
+    color: var(--udir-muted);
+    font-family: 'Courier New', monospace;
+    font-size: 0.94rem;
+  }
+
+  .udir-email {
+    word-break: break-all;
+  }
+
+  .udir-empty {
+    padding: 5rem 1rem !important;
+    text-align: center;
+  }
+
+  .udir-empty-state p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--udir-muted);
+    font-style: italic;
+  }
+
+  @keyframes udirFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .udir-header {
+      padding: 2rem;
+    }
+    .udir-title { font-size: 1.8rem; }
+    .udir-subtitle { font-size: 1rem; }
+  }
+
+  @media (max-width: 768px) {
+    .udir-table,
+    .udir-table thead,
+    .udir-table tbody,
+    .udir-table th,
+    .udir-table td,
+    .udir-table tr {
+      display: block;
+    }
+
+    .udir-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .udir-row {
+      border: 1px solid var(--udir-border);
+      border-radius: 1.2rem;
+      margin-bottom: 1.8rem;
+      padding: 1.8rem;
+      background: white;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1);
+      position: relative;
+    }
+
+    .udir-row td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .udir-row td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 1.5rem;
+      width: 45%;
+      font-weight: 600;
+      color: var(--udir-primary);
+      text-align: left;
+    }
+
+    .udir-photo {
+      padding-left: 1.5rem !important;
+      text-align: center !important;
+    }
+
+    .udir-photo::before { content: "Photo:"; }
+  }
+</style>
+
+<!-- Mobile data-labels -->
+<script>
+  document.querySelectorAll('.udir-row td').forEach(td => {
+    const headers = ['SI. No', 'Name', 'Photo', 'Address', 'Email', 'Phone'];
+    const index = Array.from(td.parentNode.children).indexOf(td);
+    if (index < headers.length) {
+      td.setAttribute('data-label', headers[index] + ':');
+    }
+  });
+</script>
+
+{% endblock %}

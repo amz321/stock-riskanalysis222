@@ -1,0 +1,395 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="aexp-wrapper">
+    <div class="aexp-container">
+      <div class="aexp-card">
+        <div class="aexp-header">
+          <h2 class="aexp-title">Add New Expert</h2>
+          <div class="aexp-accent"></div>
+        </div>
+
+        <form action="/myapp/add_expertpost" method="post" enctype="multipart/form-data" class="aexp-form" novalidate>
+          {% csrf_token %}
+
+          <!-- Row 1: Name + Email -->
+          <div class="aexp-row">
+            <div class="aexp-field">
+              <label class="aexp-label">Name <span class="aexp-req">*</span></label>
+              <input type="text" name="Name" class="aexp-input" required>
+              <span class="aexp-error"></span>
+            </div>
+            <div class="aexp-field">
+              <label class="aexp-label">Email <span class="aexp-req">*</span></label>
+              <input type="email" name="E-mail" class="aexp-input" required>
+              <span class="aexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Row 2: Phone + Place -->
+          <div class="aexp-row">
+            <div class="aexp-field">
+              <label class="aexp-label">Phone <span class="aexp-req">*</span></label>
+              <input type="tel" name="Phone" class="aexp-input" pattern="[0-9]{10}" required>
+              <span class="aexp-error"></span>
+            </div>
+            <div class="aexp-field">
+              <label class="aexp-label">Place <span class="aexp-req">*</span></label>
+              <input type="text" name="Place" class="aexp-input" required>
+              <span class="aexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Row 3: Pincode + District -->
+          <div class="aexp-row">
+            <div class="aexp-field">
+              <label class="aexp-label">Pincode <span class="aexp-req">*</span></label>
+              <input type="text" name="Pincode" class="aexp-input" pattern="[0-9]{6}" required>
+              <span class="aexp-error"></span>
+            </div>
+            <div class="aexp-field">
+              <label class="aexp-label">District <span class="aexp-req">*</span></label>
+              <input type="text" name="District" class="aexp-input" required>
+              <span class="aexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Row 4: Photo (full width) -->
+          <div class="aexp-row">
+            <div class="aexp-field aexp-field-full">
+              <label class="aexp-label">Photo <span class="aexp-req">*</span></label>
+              <input type="file" name="photo" accept="image/*" class="aexp-input aexp-input-file" required>
+              <span class="aexp-error"></span>
+              <div class="aexp-preview" id="photoPreview"></div>
+            </div>
+          </div>
+
+          <!-- Row 5: Username + Password -->
+          <div class="aexp-row">
+            <div class="aexp-field">
+              <label class="aexp-label">Username <span class="aexp-req">*</span></label>
+              <input type="text" name="Username" class="aexp-input" minlength="4" required>
+              <span class="aexp-error"></span>
+            </div>
+            <div class="aexp-field">
+              <label class="aexp-label">Password <span class="aexp-req">*</span></label>
+              <input type="password" name="Password" class="aexp-input" minlength="6" required>
+              <span class="aexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="aexp-actions">
+            <button type="submit" class="aexp-btn">Add Expert</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (aexp- prefix) ============== -->
+<style>
+  :root {
+    --aexp-bg: #f8f9fa;
+    --aexp-surface: #ffffff;
+    --aexp-primary: #ff6d00;
+    --aexp-primary-light: #ff8a00;
+    --aexp-success: #28a745;
+    --aexp-danger: #dc3545;
+    --aexp-text: #212529;
+    --aexp-muted: #6c757d;
+    --aexp-border: #dee2e6;
+    --aexp-shadow: 0 16px 48px rgba(0,0,0,.14);
+    --aexp-radius: 1.4rem;
+    --aexp-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .aexp-wrapper {
+    min-height: 100vh;
+    background: var(--aexp-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+  }
+
+  .aexp-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .aexp-card {
+    background: var(--aexp-surface);
+    border-radius: var(--aexp-radius);
+    overflow: hidden;
+    box-shadow: var(--aexp-shadow);
+    animation: aexpFadeIn 0.7s ease-out;
+  }
+
+  .aexp-header {
+    padding: 2.2rem 2.8rem;
+    background: var(--aexp-grad);
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+
+  .aexp-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .aexp-accent {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 7px;
+    background: rgba(255,255,255,.3);
+  }
+
+  .aexp-form {
+    padding: 3rem 2.8rem;
+  }
+
+  .aexp-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    flex-wrap: wrap;
+  }
+
+  .aexp-field {
+    flex: 1;
+    min-width: 280px;
+    position: relative;
+  }
+
+  .aexp-field-full {
+    flex: 100%;
+    min-width: 100%;
+  }
+
+  .aexp-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: var(--aexp-text);
+    font-size: 0.95rem;
+  }
+
+  .aexp-req {
+    color: var(--aexp-danger);
+    font-weight: 700;
+  }
+
+  .aexp-input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid var(--aexp-border);
+    border-radius: calc(var(--aexp-radius) / 1.8);
+    font-size: 1rem;
+    transition: all .25s ease;
+    background: #fdfdfd;
+  }
+
+  .aexp-input:focus {
+    outline: none;
+    border-color: var(--aexp-primary);
+    box-shadow: 0 0 0 5px rgba(255, 109, 0, .18);
+    transform: translateY(-2px);
+  }
+
+  .aexp-input.aexp-input-file {
+    padding: 0.8rem;
+    cursor: pointer;
+  }
+
+  .aexp-input.error {
+    border-color: var(--aexp-danger);
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, .15);
+  }
+
+  .aexp-input.valid {
+    border-color: var(--aexp-success);
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, .15);
+  }
+
+  .aexp-error {
+    color: var(--aexp-danger);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: block;
+    min-height: 1.2em;
+  }
+
+  .aexp-preview {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .aexp-preview img {
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: 1rem;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+    object-fit: cover;
+  }
+
+  .aexp-actions {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  .aexp-btn {
+    background: var(--aexp-grad);
+    color: white;
+    border: none;
+    padding: 1.1rem 3.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: var(--aexp-radius);
+    cursor: pointer;
+    transition: all .3s ease;
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .35);
+    min-width: 200px;
+  }
+
+  .aexp-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(255, 109, 0, .45);
+  }
+
+  .aexp-btn:active {
+    transform: translateY(-1px);
+  }
+
+  @keyframes aexpFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .aexp-row { flex-direction: column; gap: 1.2rem; }
+    .aexp-field { min-width: 100%; }
+    .aexp-form { padding: 2rem 1.8rem; }
+    .aexp-header { padding: 1.8rem 2rem; }
+    .aexp-title { font-size: 1.7rem; }
+  }
+</style>
+
+<!-- ============== REAL-TIME VALIDATION SCRIPT ============== -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.aexp-form');
+    const inputs = form.querySelectorAll('.aexp-input');
+    const photoInput = document.querySelector('input[name="photo"]');
+    const preview = document.getElementById('photoPreview');
+
+    // Photo preview
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = '';
+      }
+    });
+
+    // Real-time validation
+    inputs.forEach(input => {
+      input.addEventListener('input', validateField);
+      input.addEventListener('blur', validateField);
+    });
+
+    function validateField(e) {
+      const field = e.target;
+      const error = field.parentElement.querySelector('.aexp-error');
+      const value = field.value.trim();
+
+      // Reset
+      field.classList.remove('error', 'valid');
+      error.textContent = '';
+
+      if (!value && field.hasAttribute('required')) {
+        showError(field, 'This field is required.');
+        return;
+      }
+
+      // Specific rules
+      if (field.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          showError(field, 'Enter a valid email.');
+          return;
+        }
+      }
+
+      if (field.name === 'Phone' && value) {
+        if (!/^\d{10}$/.test(value)) {
+          showError(field, 'Phone must be 10 digits.');
+          return;
+        }
+      }
+
+      if (field.name === 'Pincode' && value) {
+        if (!/^\d{6}$/.test(value)) {
+          showError(field, 'Pincode must be 6 digits.');
+          return;
+        }
+      }
+
+      if (field.name === 'Username' && value) {
+        if (value.length < 4) {
+          showError(field, 'Username must be 4+ characters.');
+          return;
+        }
+      }
+
+      if (field.name === 'Password' && value) {
+        if (value.length < 6) {
+          showError(field, 'Password must be 6+ characters.');
+          return;
+        }
+      }
+
+      // Valid
+      field.classList.add('valid');
+    }
+
+    function showError(field, msg) {
+      field.classList.add('error');
+      const error = field.parentElement.querySelector('.aexp-error');
+      error.textContent = msg;
+    }
+
+    // Prevent submit if invalid
+    form.addEventListener('submit', (e) => {
+      let valid = true;
+      inputs.forEach(input => {
+        if (!input.classList.contains('valid') && input.value.trim()) {
+          validateField({ target: input });
+        }
+        if (input.hasAttribute('required') && !input.value.trim()) {
+          validateField({ target: input });
+          valid = false;
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault();
+        alert('Please fix the errors before submitting.');
+      }
+    });
+  });
+</script>
+
+{% endblock %}

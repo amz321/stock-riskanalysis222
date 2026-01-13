@@ -1,0 +1,328 @@
+{% extends 'expert/expert_index.html' %}
+{% block body %}
+
+<body>
+  <div class="atip-wrapper">
+    <div class="atip-container">
+      <div class="atip-card">
+        <div class="atip-header">
+          <h2 class="atip-title">Submit a New Tip</h2>
+          <div class="atip-accent"></div>
+        </div>
+
+        <form action="/myapp/Add_newtippost/" method="post" class="atip-form" novalidate>
+          {% csrf_token %}
+
+          <!-- Tip Title -->
+          <div class="atip-field">
+            <label class="atip-label">Tip Title <span class="atip-req">*</span></label>
+            <input type="text" name="tip" id="tipTitle" class="atip-input" maxlength="100" required>
+            <div class="atip-counter" id="titleCounter">0 / 100</div>
+            <span class="atip-error"></span>
+          </div>
+
+          <!-- Details -->
+          <div class="atip-field">
+            <label class="atip-label">Details <span class="atip-req">*</span></label>
+            <textarea name="details" id="tipDetails" class="atip-textarea" rows="5" maxlength="1000" required></textarea>
+            <div class="atip-counter" id="detailsCounter">0 / 1000</div>
+            <span class="atip-error"></span>
+          </div>
+
+          <!-- Submit -->
+          <div class="atip-actions">
+            <button type="submit" class="atip-btn">Add Tip</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (atip- prefix) ============== -->
+<style>
+  :root {
+    --atip-bg: #f8f9fa;
+    --atip-surface: #ffffff;
+    --atip-primary: #ff6d00;
+    --atip-primary-light: #ff8a00;
+    --atip-success: #28a745;
+    --atip-danger: #dc3545;
+    --atip-text: #212529;
+    --atip-muted: #6c757d;
+    --atip-border: #dee2e6;
+    --atip-shadow: 0 20px 60px rgba(0, 0, 0, 0.14);
+    --atip-radius: 1.6rem;
+    --atip-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .atip-wrapper {
+    min-height: 100vh;
+    background: var(--atip-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+  }
+
+  .atip-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .atip-card {
+    background: var(--atip-surface);
+    border-radius: var(--atip-radius);
+    overflow: hidden;
+    box-shadow: var(--atip-shadow);
+    animation: atipFadeIn 0.7s ease-out;
+  }
+
+  .atip-header {
+    padding: 2.2rem 2.8rem;
+    background: var(--atip-grad);
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+
+  .atip-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .atip-accent {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 7px;
+    background: rgba(255,255,255,.3);
+  }
+
+  .atip-form {
+    padding: 3rem 2.8rem;
+  }
+
+  .atip-field {
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .atip-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: var(--atip-text);
+    font-size: 0.95rem;
+  }
+
+  .atip-req {
+    color: var(--atip-danger);
+    font-weight: 700;
+  }
+
+  .atip-input,
+  .atip-textarea {
+    width: 100%;
+    padding: 1.1rem 1.3rem;
+    border: 2px solid var(--atip-border);
+    border-radius: calc(var(--atip-radius) / 1.6);
+    font-size: 1rem;
+    transition: all .3s ease;
+    background: #fdfdfd;
+    resize: vertical;
+  }
+
+  .atip-input:focus,
+  .atip-textarea:focus {
+    outline: none;
+    border-color: var(--atip-primary);
+    box-shadow: 0 0 0 5px rgba(255, 109, 0, .18);
+    transform: translateY(-2px);
+  }
+
+  .atip-input.error,
+  .atip-textarea.error {
+    border-color: var(--atip-danger);
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, .15);
+  }
+
+  .atip-input.valid,
+  .atip-textarea.valid {
+    border-color: var(--atip-success);
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, .15);
+  }
+
+  .atip-counter {
+    text-align: right;
+    font-size: 0.82rem;
+    color: var(--atip-muted);
+    margin-top: 0.4rem;
+    font-weight: 500;
+  }
+
+  .atip-counter.warning {
+    color: var(--atip-primary);
+  }
+
+  .atip-counter.danger {
+    color: var(--atip-danger);
+  }
+
+  .atip-error {
+    color: var(--atip-danger);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: block;
+    min-height: 1.2em;
+  }
+
+  .atip-actions {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  .atip-btn {
+    background: var(--atip-grad);
+    color: white;
+    border: none;
+    padding: 1.1rem 3.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: var(--atip-radius);
+    cursor: pointer;
+    transition: all .3s ease;
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .35);
+    min-width: 200px;
+  }
+
+  .atip-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(255, 109, 0, .45);
+  }
+
+  .atip-btn:active {
+    transform: translateY(-1px);
+  }
+
+  @keyframes atipFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 576px) {
+    .atip-card {
+      margin: 1rem;
+      padding: 2rem 1.8rem;
+    }
+    .atip-header {
+      padding: 1.8rem 2rem;
+    }
+    .atip-title {
+      font-size: 1.7rem;
+    }
+    .atip-form {
+      padding: 2rem 1.8rem;
+    }
+    .atip-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<!-- ============== REAL-TIME VALIDATION & COUNTERS SCRIPT ============== -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const titleInput = document.getElementById('tipTitle');
+    const detailsInput = document.getElementById('tipDetails');
+    const titleCounter = document.getElementById('titleCounter');
+    const detailsCounter = document.getElementById('detailsCounter');
+
+    // Character counters
+    const updateCounter = (input, counter, max) => {
+      const length = input.value.length;
+      counter.textContent = `${length} / ${max}`;
+      counter.classList.remove('warning', 'danger');
+
+      if (length > max * 0.8) counter.classList.add('warning');
+      if (length >= max) counter.classList.add('danger');
+    };
+
+    titleInput.addEventListener('input', () => updateCounter(titleInput, titleCounter, 100));
+    detailsInput.addEventListener('input', () => updateCounter(detailsInput, detailsCounter, 1000));
+
+    // Initialize
+    updateCounter(titleInput, titleCounter, 100);
+    updateCounter(detailsInput, detailsCounter, 1000);
+
+    // Real-time validation
+    const inputs = [titleInput, detailsInput];
+    inputs.forEach(input => {
+      input.addEventListener('input', validateField);
+      input.addEventListener('blur', validateField);
+    });
+
+    function validateField(e) {
+      const field = e.target;
+      const error = field.parentElement.querySelector('.atip-error');
+      const value = field.value.trim();
+
+      field.classList.remove('error', 'valid');
+      if (error) error.textContent = '';
+
+      if (!value && field.hasAttribute('required')) {
+        showError(field, 'This field is required.');
+        return;
+      }
+
+      if (field === titleInput && value) {
+        if (value.length < 5) {
+          showError(field, 'Title must be at least 5 characters.');
+          return;
+        }
+        if (value.length > 100) {
+          showError(field, 'Title too long (max 100).');
+          return;
+        }
+      }
+
+      if (field === detailsInput && value) {
+        if (value.length < 20) {
+          showError(field, 'Details must be at least 20 characters.');
+          return;
+        }
+      }
+
+      field.classList.add('valid');
+    }
+
+    function showError(field, msg) {
+      field.classList.add('error');
+      const error = field.parentElement.querySelector('.atip-error');
+      if (error) error.textContent = msg;
+    }
+
+    // Prevent submit if invalid
+    document.querySelector('.atip-form').addEventListener('submit', function(e) {
+      let valid = true;
+      inputs.forEach(input => {
+        if (!input.classList.contains('valid') && input.value.trim()) {
+          validateField({ target: input });
+        }
+        if (input.hasAttribute('required') && !input.value.trim()) {
+          validateField({ target: input });
+          valid = false;
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault();
+        alert('Please fix the errors before submitting.');
+      }
+    });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,687 @@
+{% extends 'company/company_index.html' %}
+{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Reviews & Ratings</title>
+    <style>
+        .company-review-reset * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .company-review-body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .company-review-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .company-review-header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        .company-review-header h1 {
+            color: #1a1a1a;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .company-review-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .company-review-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .company-review-average {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #ffe4cc 0%, #ffd4b3 100%);
+            border-radius: 15px;
+        }
+
+        .company-review-avg-number {
+            font-size: 4em;
+            font-weight: 700;
+            color: #ff7700;
+            margin-bottom: 10px;
+        }
+
+        .company-review-avg-stars {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .company-review-avg-total {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .company-review-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .company-review-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-review-bar-label {
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .company-review-bar-container {
+            flex: 1;
+            height: 12px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .company-review-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .company-review-bar-count {
+            min-width: 50px;
+            text-align: right;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .company-review-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .company-review-btn-write {
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+        }
+
+        .company-review-btn-write:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 119, 0, 0.4);
+        }
+
+        .company-review-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .company-review-filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .company-review-filter-btn:hover,
+        .company-review-filter-btn.company-review-active {
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border-color: #ff7700;
+            transform: translateY(-2px);
+        }
+
+        .company-review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .company-review-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .company-review-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .company-review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .company-review-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-review-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .company-review-user-details h3 {
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .company-review-date {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .company-review-rating-display {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .company-review-stars {
+            font-size: 1.5em;
+            letter-spacing: 3px;
+        }
+
+        .company-review-star {
+            color: #e0e0e0;
+        }
+
+        .company-review-star.company-review-filled {
+            color: #ffc107;
+        }
+
+        .company-review-star.company-review-half {
+            position: relative;
+            color: #e0e0e0;
+        }
+
+        .company-review-star.company-review-half::before {
+            content: '★';
+            position: absolute;
+            left: 0;
+            color: #ffc107;
+            width: 50%;
+            overflow: hidden;
+        }
+
+        .company-review-rating-number {
+            font-weight: 700;
+            color: #ff7700;
+            font-size: 1.1em;
+        }
+
+        .company-review-text {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        /* Modal Styles */
+        .company-review-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .company-review-modal.company-review-modal-active {
+            display: flex;
+        }
+
+        .company-review-modal-content {
+            background: white;
+            padding: 45px;
+            border-radius: 25px;
+            width: 95%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: company-review-slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes company-review-slideIn {
+            from {
+                transform: translateY(-80px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .company-review-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #ffe4cc;
+        }
+
+        .company-review-modal-header h2 {
+            color: #1a1a1a;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .company-review-close {
+            background: #f5f5f5;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-weight: 300;
+        }
+
+        .company-review-close:hover {
+            background: #ff7700;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .company-review-form-group {
+            margin-bottom: 25px;
+        }
+
+        .company-review-form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .company-review-star-rating {
+            display: flex;
+            gap: 10px;
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .company-review-star-input {
+            cursor: pointer;
+            color: #e0e0e0;
+            transition: all 0.2s ease;
+        }
+
+        .company-review-star-input:hover,
+        .company-review-star-input.company-review-selected {
+            color: #ffc107;
+            transform: scale(1.2);
+        }
+
+        .company-review-form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fafafa;
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .company-review-form-group textarea:focus {
+            outline: none;
+            border-color: #ff9933;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.1);
+        }
+
+        .company-review-modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .company-review-btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, #ff9933 0%, #ff7700 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+        }
+
+        .company-review-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 119, 0, 0.4);
+        }
+
+        .company-review-btn-cancel {
+            flex: 1;
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #e0e0e0;
+            padding: 16px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .company-review-btn-cancel:hover {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        .company-review-empty {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .company-review-empty h3 {
+            color: #1a1a1a;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .company-review-empty p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .company-review-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .company-review-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .company-review-filter {
+                justify-content: center;
+            }
+
+            .company-review-card-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .company-review-rating-display {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body class="company-review-body">
+    <div class="company-review-reset">
+        <div class="company-review-container">
+            <!-- Header -->
+            <div class="company-review-header">
+                <h1>User Reviews & Ratings</h1>
+                <p>See what our users are saying about you</p>
+            </div>
+
+            <!-- Rating Summary -->
+
+            <!-- Actions -->
+
+            <!-- Reviews List -->
+            <div class="company-review-list">
+                {% for review in data %}
+                <div class="company-review-card">
+                    <div class="company-review-card-header">
+                        <div class="company-review-user-info">
+                            <div class="company-review-user-avatar">
+                                {{ review.USER.name|slice:":1"|upper }}
+                            </div>
+                            <div class="company-review-user-details">
+                                <h3>{{ review.USER.name }}</h3>
+                                <span class="company-review-date">{{ review.date|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="company-review-rating-display">
+                            <div class="company-review-stars" data-rating="{{ review.rating }}"></div>
+                            <span class="company-review-rating-number">{{ review.rating|floatformat:1 }}/5</span>
+                        </div>
+                    </div>
+                    <p class="company-review-text">{{ review.review }}</p>
+                </div>
+                {% empty %}
+                <div class="company-review-empty">
+                    <h3>No Reviews Yet</h3>
+                    <p>Be the first to share your experience!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Write Review Modal -->
+            <div class="company-review-modal" id="reviewModal">
+                <div class="company-review-modal-content">
+                    <div class="company-review-modal-header">
+                        <h2>Write Your Review</h2>
+                        <button class="company-review-close" onclick="companyReview.closeModal()">&times;</button>
+                    </div>
+                    <form id="reviewForm" method="POST">
+                        {% csrf_token %}
+
+                        <div class="company-review-form-group">
+                            <label>Your Rating</label>
+                            <div class="company-review-star-rating" id="starRating">
+                                <span class="company-review-star-input" data-rating="1">★</span>
+                                <span class="company-review-star-input" data-rating="2">★</span>
+                                <span class="company-review-star-input" data-rating="3">★</span>
+                                <span class="company-review-star-input" data-rating="4">★</span>
+                                <span class="company-review-star-input" data-rating="5">★</span>
+                            </div>
+                            <input type="hidden" id="ratingValue" name="rating" value="0" required>
+                        </div>
+
+                        <div class="company-review-form-group">
+                            <label for="reviewText">Your Review</label>
+                            <textarea id="reviewText" name="review" placeholder="Share your experience with us..." required></textarea>
+                        </div>
+
+                        <div class="company-review-modal-actions">
+                            <button type="submit" class="company-review-btn-submit">Submit Review</button>
+                            <button type="button" class="company-review-btn-cancel" onclick="companyReview.closeModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const companyReview = {
+            selectedRating: 0,
+
+            init: function() {
+                this.setupStarRating();
+                this.displayReviewStars();
+                this.displayAverageStars();
+            },
+
+            setupStarRating: function() {
+                const stars = document.querySelectorAll('.company-review-star-input');
+                stars.forEach(star => {
+                    star.addEventListener('click', (e) => {
+                        this.selectedRating = parseInt(e.target.dataset.rating);
+                        document.getElementById('ratingValue').value = this.selectedRating;
+                        this.updateStarDisplay();
+                    });
+
+                    star.addEventListener('mouseenter', (e) => {
+                        const rating = parseInt(e.target.dataset.rating);
+                        stars.forEach((s, index) => {
+                            if (index < rating) {
+                                s.style.color = '#ffc107';
+                            } else {
+                                s.style.color = '#e0e0e0';
+                            }
+                        });
+                    });
+                });
+
+                document.getElementById('starRating').addEventListener('mouseleave', () => {
+                    this.updateStarDisplay();
+                });
+            },
+
+            updateStarDisplay: function() {
+                const stars = document.querySelectorAll('.company-review-star-input');
+                stars.forEach((star, index) => {
+                    if (index < this.selectedRating) {
+                        star.classList.add('company-review-selected');
+                        star.style.color = '#ffc107';
+                    } else {
+                        star.classList.remove('company-review-selected');
+                        star.style.color = '#e0e0e0';
+                    }
+                });
+            },
+
+            displayReviewStars: function() {
+                const reviewStars = document.querySelectorAll('.company-review-stars[data-rating]');
+                reviewStars.forEach(container => {
+                    const rating = parseFloat(container.dataset.rating);
+                    container.innerHTML = this.generateStars(rating);
+                });
+            },
+
+            displayAverageStars: function() {
+                const avgStarsElement = document.getElementById('avgStars');
+                if (avgStarsElement) {
+                    const avgRating = parseFloat('{{ average_rating }}') || 0;
+                    avgStarsElement.innerHTML = this.generateStars(avgRating);
+                }
+            },
+
+            generateStars: function(rating) {
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        starsHtml += '<span class="company-review-star company-review-filled">★</span>';
+                    } else if (i - 0.5 <= rating) {
+                        starsHtml += '<span class="company-review-star company-review-half">★</span>';
+                    } else {
+                        starsHtml += '<span class="company-review-star">★</span>';
+                    }
+                }
+                return starsHtml;
+            },
+
+            openModal: function() {
+                this.selectedRating = 0;
+                document.getElementById('reviewForm').reset();
+                this.updateStarDisplay();
+                document.getElementById('reviewModal').classList.add('company-review-modal-active');
+            },
+
+            closeModal: function() {
+                document.getElementById('reviewModal').classList.remove('company-review-modal-active');
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            companyReview.init();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                companyReview.closeModal();
+            }
+        });
+
+        // Form validation
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            const rating = document.getElementById('ratingValue').value;
+            if (rating === '0') {
+                e.preventDefault();
+                alert('Please select a rating before submitting your review.');
+            }
+        });
+    </script>
+</body>
+{% endblock %}

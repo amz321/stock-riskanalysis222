@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stock Prediction</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --spp-bg: #FFF8F0;
+      --spp-card: #FFFFFF;
+      --spp-surface: rgba(255, 255, 255, 0.92);
+      --spp-primary: #EF6C00;
+      --spp-primary-light: #FF8A65;
+      --spp-success: #10B981;
+      --spp-danger: #EF4444;
+      --spp-text: #1F2937;
+      --spp-muted: #6B7280;
+      --spp-border: #E5E7EB;
+      --spp-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      --spp-radius: 1.5rem;
+      --spp-grad: linear-gradient(135deg, #FF8A65, #EF6C00);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--spp-bg);
+      color: var(--spp-text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spp-inv-back-button-sp {
+            background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%); /* Orange gradient */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            width:100px;
+            margin-left: 0px;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            gap: 6px;
+        }
+
+        .spp-inv-back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+        }
+
+    .spp-container {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .spp-card {
+      background: var(--spp-card);
+      border-radius: var(--spp-radius);
+      overflow: hidden;
+      box-shadow: var(--spp-shadow);
+      animation: sppFadeIn 0.7s ease-out;
+      position: relative;
+    }
+
+        .spp-header {
+      padding: 2rem 2rem 1.5rem;
+      background: var(--spp-grad);
+      color: white;
+      text-align: center;
+      position: relative; /* Required for absolute back button */
+    }
+
+    .spp-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+    }
+
+    .spp-subtitle {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .spp-body {
+      padding: 2rem;
+    }
+
+    .spp-info {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .spp-info p {
+      margin: 0.75rem 0;
+      font-size: 1.1rem;
+    }
+
+    .spp-label {
+      font-weight: 600;
+      color: var(--spp-muted);
+      margin-right: 0.5rem;
+    }
+
+    .spp-value {
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    .spp-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .spp-trend-up { color: var(--spp-success); }
+    .spp-trend-down { color: var(--spp-danger); }
+
+    .spp-arrow {
+      font-size: 1.3rem;
+      animation: sppBounce 1.5s infinite;
+    }
+
+
+    @keyframes sppBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .spp-btn {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      margin: 1.5rem auto 0;
+      padding: 0.9rem 1.5rem;
+      background: var(--spp-grad);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 16px rgba(239, 108, 0, 0.3);
+    }
+
+    .spp-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(239, 108, 0, 0.4);
+    }
+
+    .spp-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spp-chart-container {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 1rem;
+      position: relative;
+    }
+    /* Back Button Container */
+.spp-header-back {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 5;
+}
+
+/* Back Button */
+.spp-btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  padding: 0.65rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.spp-btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.spp-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Responsive: Stack on small screens */
+@media (max-width: 480px) {
+  .spp-header-back {
+    position: static;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .spp-btn-back {
+    width: fit-content;
+    margin: 0 auto;
+  }
+}
+
+
+    /* Loading Animation (5 seconds) */
+    .spp-loader {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--spp-surface);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      border-radius: var(--spp-radius);
+      animation: sppLoaderFadeOut 0.6s ease-out 5s forwards;
+    }
+
+    .spp-loader::before {
+      content: '';
+      width: 60px;
+      height: 60px;
+      border: 6px solid #e0e0e0;
+      border-top-color: var(--spp-primary);
+      border-radius: 50%;
+      animation: sppSpin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    .spp-loader-text {
+      font-size: 1.1rem;
+      color: var(--spp-primary);
+      font-weight: 600;
+    }
+
+    @keyframes sppSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes sppLoaderFadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* Shimmer Skeleton */
+    .spp-skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: sppShimmer 1.8s infinite;
+      border-radius: 0.5rem;
+    }
+
+    @keyframes sppShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .spp-skeleton-line { height: 20px; margin: 1rem 0; }
+    .spp-skeleton-title { height: 28px; width: 70%; margin: 0 auto 1.5rem; }
+    .spp-skeleton-btn { height: 48px; width: 280px; margin: 1.5rem auto 0; border-radius: 1rem; }
+
+    /* Fade-in content */
+    .spp-content {
+      opacity: 0;
+      animation: sppFadeInContent 0.6s ease-out 5.2s forwards;
+    }
+
+    @keyframes sppFadeInContent {
+      to { opacity: 1; }
+    }
+
+    @keyframes sppFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    canvas {
+      max-height: 400px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="spp-container">
+
+    <div class="spp-card">
+
+
+      <!-- 5-Second Loading Overlay -->
+      <div class="spp-loader" id="loader">
+
+        <div class="spp-loader-text">Analyzing Market Data...</div>
+      </div>
+
+      <!-- Skeleton (visible during load) -->
+      <div id="skeleton" style="padding: 2rem;">
+        <div class="spp-skeleton spp-skeleton-title"></div>
+        <div class="spp-skeleton spp-skeleton-line" style="width:60%"></div>
+        <div class="spp-skeleton spp-skeleton-line" style="width:50%"></div>
+        <div class="spp-skeleton spp-skeleton-btn"></div>
+        <div class="spp-skeleton" style="height:300px; margin-top:2rem; border-radius:1rem;"></div>
+      </div>
+
+      <!-- Real Content (hidden until loaded) -->
+      <div class="spp-content" id="content" style="display:none;">
+
+        <div class="spp-header">
+              <!-- Back Button -->
+              <div class="spp-header-back">
+                <button class="spp-btn-back" onclick="history.back()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spp-icon">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                  Back
+                </button>
+              </div>
+
+              <h2 class="spp-title">Stock Prediction</h2>
+              <p class="spp-subtitle">AI-powered forecast for tomorrow</p>
+            </div>
+
+        <div class="spp-body">
+          <div class="spp-info">
+            <p>
+              <span class="spp-label">Predicted Price:</span>
+              <span class="spp-value" id="predicted_price">--</span>
+            </p>
+            <p>
+              <span class="spp-label">Trend:</span>
+              <span id="trend" class="spp-trend">--</span>
+            </p>
+          </div>
+
+          <button class="spp-btn" onclick="fetchPrediction()" id="fetchBtn">
+            Fetch Prediction
+          </button>
+
+          <div class="spp-chart-container">
+            <canvas id="historyChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const stock_id = "{{ request.session.stock_id }}";
+    const url = "/myapp/PredictStockData/";
+    let chart = null;
+
+    // Show content after 5 seconds
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('skeleton').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      fetchPrediction(); // Auto-fetch after loading
+    }, 5000);
+
+    async function fetchPrediction() {
+      const btn = document.getElementById('fetchBtn');
+      btn.disabled = true;
+      btn.textContent = 'Loading...';
+
+      const formData = new FormData();
+      formData.append("stock_id", stock_id);
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+
+        if (data.status === "ok") {
+          document.getElementById("predicted_price").textContent = `$${parseFloat(data.predicted_price).toFixed(2)}`;
+
+          const trendEl = document.getElementById("trend");
+          trendEl.textContent = data.trend.toUpperCase();
+          trendEl.className = data.trend === "up" ? "spp-trend spp-trend-up" : "spp-trend spp-trend-down";
+          trendEl.innerHTML = `<span class="spp-arrow">${data.trend === "up" ? 'Up' : 'Down'}</span> ${data.trend.toUpperCase()}`;
+
+          renderChart(data.history, data.predicted_price);
+        } else {
+          alert(data.message || "Prediction failed");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Fetch Prediction';
+      }
+    }
+
+    function renderChart(history, predicted_price) {
+      const labels = history.map(h => h.date);
+      const prices = history.map(h => h.ending);
+
+      // Add prediction point
+      const lastDate = new Date(labels[labels.length - 1]);
+      const nextDate = new Date(lastDate);
+      nextDate.setDate(lastDate.getDate() + 1);
+      labels.push(nextDate.toISOString().split('T')[0]);
+      prices.push(predicted_price);
+
+      const ctx = document.getElementById("historyChart").getContext("2d");
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Historical Price",
+              data: prices.slice(0, -1),
+              borderColor: "#94a3b8",
+              backgroundColor: "rgba(148, 163, 184, 0.1)",
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4,
+            },
+            {
+              label: "Predicted",
+              data: [null, ...prices.slice(-2)],
+              borderColor: "#EF6C00",
+              backgroundColor: "rgba(239, 108, 0, 0.2)",
+              borderDash: [5, 5],
+              fill: false,
+              tension: 0.3,
+              pointRadius: 6,
+              pointBackgroundColor: "#EF6C00",
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#6B7280' } },
+            tooltip: { backgroundColor: 'rgba(0,0,0,0.8)' }
+          },
+          scales: {
+            x: { ticks: { color: '#6B7280' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+            y: { ticks: { color: '#6B7280' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

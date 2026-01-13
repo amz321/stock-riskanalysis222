@@ -1,0 +1,373 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="eexp-wrapper">
+    <div class="eexp-container">
+      <div class="eexp-card">
+        <div class="eexp-header">
+          <h2 class="eexp-title">Edit Expert Details</h2>
+          <div class="eexp-accent"></div>
+        </div>
+
+        <form action="/myapp/edit_expertpost/" method="post" enctype="multipart/form-data" class="eexp-form" novalidate>
+          {% csrf_token %}
+
+          <!-- Row 1: Name + Phone -->
+          <div class="eexp-row">
+            <div class="eexp-field">
+              <label class="eexp-label">Name <span class="eexp-req">*</span></label>
+              <input type="text" name="Name" value="{{ data.name }}" class="eexp-input" required>
+              <span class="eexp-error"></span>
+            </div>
+            <div class="eexp-field">
+              <label class="eexp-label">Phone <span class="eexp-req">*</span></label>
+              <input type="tel" name="Phone" value="{{ data.phone }}" class="eexp-input" pattern="[0-9]{10}" required>
+              <span class="eexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Row 2: Place + Pincode -->
+          <div class="eexp-row">
+            <div class="eexp-field">
+              <label class="eexp-label">Place <span class="eexp-req">*</span></label>
+              <input type="text" name="Place" value="{{ data.place }}" class="eexp-input" required>
+              <span class="eexp-error"></span>
+            </div>
+            <div class="eexp-field">
+              <label class="eexp-label">Pincode <span class="eexp-req">*</span></label>
+              <input type="text" name="Pincode" value="{{ data.pincode }}" class="eexp-input" pattern="[0-9]{6}" required>
+              <span class="eexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Row 3: District (full width) -->
+          <div class="eexp-row">
+            <div class="eexp-field eexp-field-full">
+              <label class="eexp-label">District <span class="eexp-req">*</span></label>
+              <input type="text" name="District" value="{{ data.district }}" class="eexp-input" required>
+              <span class="eexp-error"></span>
+            </div>
+          </div>
+
+          <!-- Row 4: Current Photo + Upload -->
+          <div class="eexp-row">
+            <div class="eexp-field eexp-field-full">
+              <label class="eexp-label">Current Photo</label>
+              <div class="eexp-current-photo">
+                <img src="{{ data.photo.url }}" alt="Current Photo" class="eexp-current-img">
+              </div>
+              <label class="eexp-label">Update Photo (optional)</label>
+              <input type="file" name="photo" accept="image/*" class="eexp-input eexp-input-file">
+              <span class="eexp-error"></span>
+              <div class="eexp-preview" id="photoPreview"></div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="eexp-actions">
+            <button type="submit" class="eexp-btn">Update Expert</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (eexp- prefix) ============== -->
+<style>
+  :root {
+    --eexp-bg: #f8f9fa;
+    --eexp-surface: #ffffff;
+    --eexp-primary: #ff6d00;
+    --eexp-primary-light: #ff8a00;
+    --eexp-success: #28a745;
+    --eexp-danger: #dc3545;
+    --eexp-text: #212529;
+    --eexp-muted: #6c757d;
+    --eexp-border: #dee2e6;
+    --eexp-shadow: 0 16px 48px rgba(0,0,0,.14);
+    --eexp-radius: 1.4rem;
+    --eexp-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .eexp-wrapper {
+    min-height: 100vh;
+    background: var(--eexp-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+  }
+
+  .eexp-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .eexp-card {
+    background: var(--eexp-surface);
+    border-radius: var(--eexp-radius);
+    overflow: hidden;
+    box-shadow: var(--eexp-shadow);
+    animation: eexpFadeIn 0.7s ease-out;
+  }
+
+  .eexp-header {
+    padding: 2.2rem 2.8rem;
+    background: var(--eexp-grad);
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+
+  .eexp-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .eexp-accent {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 7px;
+    background: rgba(255,255,255,.3);
+  }
+
+  .eexp-form {
+    padding: 3rem 2.8rem;
+  }
+
+  .eexp-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    flex-wrap: wrap;
+  }
+
+  .eexp-field {
+    flex: 1;
+    min-width: 280px;
+    position: relative;
+  }
+
+  .eexp-field-full {
+    flex: 100%;
+    min-width: 100%;
+  }
+
+  .eexp-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: var(--eexp-text);
+    font-size: 0.95rem;
+  }
+
+  .eexp-req {
+    color: var(--eexp-danger);
+    font-weight: 700;
+  }
+
+  .eexp-input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid var(--eexp-border);
+    border-radius: calc(var(--eexp-radius) / 1.8);
+    font-size: 1rem;
+    transition: all .25s ease;
+    background: #fdfdfd;
+  }
+
+  .eexp-input:focus {
+    outline: none;
+    border-color: var(--eexp-primary);
+    box-shadow: 0 0 0 5px rgba(255, 109, 0, .18);
+    transform: translateY(-2px);
+  }
+
+  .eexp-input.eexp-input-file {
+    padding: 0.8rem;
+    cursor: pointer;
+  }
+
+  .eexp-input.error {
+    border-color: var(--eexp-danger);
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, .15);
+  }
+
+  .eexp-input.valid {
+    border-color: var(--eexp-success);
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, .15);
+  }
+
+  .eexp-error {
+    color: var(--eexp-danger);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: block;
+    min-height: 1.2em;
+  }
+
+  .eexp-current-photo {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .eexp-current-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+  }
+
+  .eexp-preview {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .eexp-preview img {
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: 1rem;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+    object-fit: cover;
+  }
+
+  .eexp-actions {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  .eexp-btn {
+    background: var(--eexp-grad);
+    color: white;
+    border: none;
+    padding: 1.1rem 3.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: var(--eexp-radius);
+    cursor: pointer;
+    transition: all .3s ease;
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .35);
+    min-width: 220px;
+  }
+
+  .eexp-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(255, 109, 0, .45);
+  }
+
+  .eexp-btn:active {
+    transform: translateY(-1px);
+  }
+
+  @keyframes eexpFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .eexp-row { flex-direction: column; gap: 1.2rem; }
+    .eexp-field { min-width: 100%; }
+    .eexp-form { padding: 2rem 1.8rem; }
+    .eexp-header { padding: 1.8rem 2rem; }
+    .eexp-title { font-size: 1.7rem; }
+  }
+</style>
+
+<!-- ============== REAL-TIME VALIDATION + PHOTO PREVIEW SCRIPT ============== -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.eexp-form');
+    const inputs = form.querySelectorAll('.eexp-input');
+    const photoInput = document.querySelector('input[name="photo"]');
+    const preview = document.getElementById('photoPreview');
+
+    // Photo preview
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `<img src="${e.target.result}" alt="New Photo Preview">`;
+        };
+        reader.readAsDataURL869(file);
+      } else {
+        preview.innerHTML = '';
+      }
+    });
+
+    // Real-time validation
+    inputs.forEach(input => {
+      input.addEventListener('input', validateField);
+      input.addEventListener('blur', validateField);
+    });
+
+    function validateField(e) {
+      const field = e.target;
+      const error = field.parentElement.querySelector('.eexp-error');
+      const value = field.value.trim();
+
+      // Reset
+      field.classList.remove('error', 'valid');
+      error.textContent = '';
+
+      if (!value && field.hasAttribute('required')) {
+        showError(field, 'This field is required.');
+        return;
+      }
+
+      // Phone: 10 digits
+      if (field.name === 'Phone' && value) {
+        if (!/^\d{10}$/.test(value)) {
+          showError(field, 'Phone must be 10 digits.');
+          return;
+        }
+      }
+
+      // Pincode: 6 digits
+      if (field.name === 'Pincode' && value) {
+        if (!/^\d{6}$/.test(value)) {
+          showError(field, 'Pincode must be 6 digits.');
+          return;
+        }
+      }
+
+      // Valid
+      field.classList.add('valid');
+    }
+
+    function showError(field, msg) {
+      field.classList.add('error');
+      const error = field.parentElement.querySelector('.eexp-error');
+      error.textContent = msg;
+    }
+
+    // Prevent submit if invalid
+    form.addEventListener('submit', (e) => {
+      let valid = true;
+      inputs.forEach(input => {
+        if (!input.classList.contains('valid') && input.value.trim()) {
+          validateField({ target: input });
+        }
+        if (input.hasAttribute('required') && !input.value.trim()) {
+          validateField({ target: input });
+          valid = false;
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault();
+        alert('Please fix the errors before submitting.');
+      }
+    });
+  });
+</script>
+
+{% endblock %}

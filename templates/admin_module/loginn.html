@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RISKLY | Stock Market Risk Analysis</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --primary: #ff6d00;
+      --primary-dark: #e65100;
+      --text: #1a1a1a;
+      --muted: #666;
+      --success: #00c853;
+      --danger: #ff1744;
+      --radius: 1.4rem;
+      --shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body, html { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); overflow: hidden; }
+
+    /* Animated Candlestick Particles */
+    .particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .candle {
+      position: absolute;
+      width: 6px;
+      background: var(--primary);
+      opacity: 0.4;
+      animation: float 12s infinite linear;
+    }
+    .wick { background: #333; width: 2px; margin: 0 auto; }
+    @keyframes float {
+      0%   { transform: translateY(100vh) rotate(0deg); }
+      100% { transform: translateY(-100px) rotate(360deg); }
+    }
+
+    /* Layout */
+    .login-wrapper {
+      display: flex;
+      height: 100vh;
+      position: relative;
+      z-index: 2;
+    }
+    .login-left {
+      flex: 1;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%),
+                  url('/static/login/bg.jpg') center/cover no-repeat;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .login-left::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+    }
+    .hero-content {
+      position: relative;
+      text-align: center;
+      max-width: 500px;
+      padding: 2rem;
+    }
+    .logo {
+      width: 120px;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,.5));
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 900;
+      margin: 0 0 1rem;
+      background: linear-gradient(90deg, #ff8a00, #ff6d00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      font-weight: 600;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+
+    .login-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: var(--bg);
+    }
+    .login-card {
+      background: var(--card);
+      padding: 3rem 2.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      animation: slideUp 0.8s ease-out;
+    }
+    .card-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .card-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 0.5rem;
+    }
+    .card-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .form-control {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border: 2px solid #e0e0e0;
+      border-radius: calc(var(--radius) / 1.5);
+      font-size: 1rem;
+      transition: all .3s ease;
+      background: #fdfdfd;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 5px rgba(255,109,0,.15);
+      transform: translateY(-2px);
+    }
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 48px;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* Password Strength */
+    .strength-meter {
+      height: 6px;
+      border-radius: 3px;
+      background: #eee;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+    .strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: all .4s ease;
+    }
+    .strength-text {
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+      color: var(--muted);
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--muted);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .checkbox.checked::after {
+      content: '✓';
+      position: absolute;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .3s ease;
+      box-shadow: 0 8px 25px rgba(255,109,0,.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-login:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 35px rgba(255,109,0,.5);
+    }
+    .btn-login::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width .4s, height .4s;
+    }
+    .btn-login:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.95rem;
+    }
+    .register-link a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 992px) {
+      .login-wrapper { flex-direction: column; }
+      .login-left, .login-right { flex: none; height: 50vh; }
+      .hero-title { font-size: 2.4rem; }
+    }
+    @media (max-width: 576px) {
+      .login-card { padding: 2rem 1.5rem; }
+      .hero-content { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Candlesticks -->
+  <div class="particles" id="particles"></div>
+
+  <div class="login-wrapper">
+    <!-- LEFT: HERO -->
+    <div class="login-left">
+      <div class="hero-content">
+        <img src="/static/login/stockglobe.jpg" alt="RISKLY" class="logo">
+        <h1 class="hero-title">RISKLY</h1>
+        <p class="hero-subtitle">
+          Real-time stock market risk analysis powered by AI. Spot volatility, predict crashes, and protect your portfolio 24/7.
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num">98.2%</div>
+            <div>Accuracy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">50K+</div>
+            <div>Users</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">4.9★</div>
+            <div>Rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: LOGIN FORM -->
+    <div class="login-right">
+      <div class="login-card">
+        <div class="card-header">
+          <h2 class="card-title">Welcome Back</h2>
+          <p class="card-subtitle">Log in to your risk dashboard</p>
+        </div>
+
+        <form action="/myapp/login_post/" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" name="uname" class="form-control" placeholder="Enter username" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="password" name="pwrd" class="form-control" placeholder="Enter password" required>
+          </div>
+               {% block content %}
+      {% include 'msgalert.html' %}
+      {% endblock %}
+
+          <div class="options">
+            <label class="remember">
+              <div class="checkbox" id="checkbox"></div>
+              Remember me
+            </label>
+            <a href="/myapp/ForgotPassword/" class="forgot-pass">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn-login">Log In Securely</button>
+        </form>
+
+        <div class="register-link">
+          Need an account? <a href="/myapp/CompanyRegistration/">Register your company</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Candlestick Particles
+    const particles = document.getElementById('particles');
+    function createCandle() {
+      const candle = document.createElement('div');
+      candle.className = 'candle';
+      candle.style.left = Math.random() * 100 + 'vw';
+      candle.style.height = Math.random() * 40 + 20 + 'px';
+      candle.style.animationDuration = Math.random() * 8 + 8 + 's';
+      candle.style.animationDelay = Math.random() * 5 + 's';
+
+      const wick = document.createElement('div');
+      wick.className = 'wick';
+      wick.style.height = Math.random() * 20 + 10 + 'px';
+      candle.appendChild(wick);
+
+      particles.appendChild(candle);
+      setTimeout(() => candle.remove(), 20000);
+    }
+    setInterval(createCandle, 800);
+
+    // Password Strength
+    const pwd = document.getElementById('password');
+    const bar = document.getElementById('strengthBar');
+    const text = document.getElementById('strengthText');
+
+    pwd.addEventListener('input', () => {
+      const val = pwd.value;
+      let strength = 0;
+      if (val.length >= 8) strength++;
+      if (/[A-Z]/.test(val)) strength++;
+      if (/[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+      bar.style.width = (strength * 25) + '%';
+      if (strength === 0) { bar.style.background = '#ccc'; text.textContent = 'Enter a password'; }
+      else if (strength <= 2) { bar.style.background = '#ff1744'; text.textContent = 'Weak'; }
+      else if (strength === 3) { bar.style.background = '#ffc107'; text.textContent = 'Medium'; }
+      else { bar.style.background = '#00c853'; text.textContent = 'Strong'; }
+    });
+
+    // Remember Me Checkbox
+    document.getElementById('checkbox').addEventListener('click', function() {
+      this.classList.toggle('checked');
+    });
+  </script>
+</body>
+</html>

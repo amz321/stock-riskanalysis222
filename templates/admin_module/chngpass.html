@@ -1,0 +1,183 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="cpw-container">
+    <form action="/myapp/change_passwordpost/" method="post" class="cpw-form">
+
+      <div class="cpw-field">
+        <label class="cpw-label">Current Password:</label>
+        <input type="password" name="Current Password" class="cpw-input">
+      </div>
+
+      <div class="cpw-field">
+        <label class="cpw-label">New Password:</label>
+        <input type="password" name="New Password" class="cpw-input">
+      </div>
+
+      <div class="cpw-field">
+        <label class="cpw-label">Confirm Password:</label>
+        <input type="password" name="Confirm Password" class="cpw-input">
+      </div>
+          {% block content %}
+      {% include 'msgalert.html' %}
+      {% endblock %}
+
+      <div class="cpw-actions">
+        <button type="submit" class="cpw-btn">Change</button>
+      </div>
+
+    </form>
+
+  </div>
+</body>
+
+<!-- ============== WIDE & STUNNING STYLES (unique prefix) ============== -->
+<style>
+  :root {
+    --cpw-bg: #f8f9fa;
+    --cpw-surface: #ffffff;
+    --cpw-primary: #ff6d00;
+    --cpw-on-primary: #ffffff;
+    --cpw-text: #212529;
+    --cpw-muted: #6c757d;
+    --cpw-grad-orange: linear-gradient(135deg, #ff8a00, #ff6d00);
+    --cpw-shadow: 0 12px 32px rgba(0,0,0,.1);
+    --cpw-radius: 1rem;
+  }
+
+  .cpw-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cpw-grad-orange), var(--cpw-bg);
+    background-blend-mode: soft-light;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* ---- WIDER FORM ---- */
+  .cpw-form {
+    background: var(--cpw-surface);
+    padding: 3.5rem 3rem;               /* more internal space */
+    border-radius: var(--cpw-radius);
+    box-shadow: var(--cpw-shadow);
+    width: 100%;
+    max-width: 520px;                   /* ← BIGGER WIDTH */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: cpwFadeIn 0.6s ease-out;
+  }
+
+  .cpw-form::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;                         /* thicker accent bar */
+    background: var(--cpw-grad-orange);
+  }
+
+  .cpw-field {
+    margin-bottom: 1.75rem;
+    text-align: left;
+  }
+
+  .cpw-label {
+    display: block;
+    margin-bottom: .6rem;
+    font-weight: 600;
+    color: var(--cpw-text);
+    font-size: 1rem;
+  }
+
+  .cpw-input {
+    width: 100%;
+    padding: 1.1rem 1.3rem;
+    border: 2px solid #dee2e6;
+    border-radius: calc(var(--cpw-radius) / 1.5);
+    font-size: 1.05rem;
+    transition: all .25s ease;
+    background: #fdfdfd;
+  }
+
+  .cpw-input:focus {
+    outline: none;
+    border-color: var(--cpw-primary);
+    box-shadow: 0 0 0 5px rgba(255, 109, 0, .18);
+    transform: translateY(-2px);
+  }
+
+  .cpw-actions {
+    margin-top: 2.25rem;
+  }
+
+  .cpw-btn {
+    background: var(--cpw-grad-orange);
+    color: var(--cpw-on-primary);
+    border: none;
+    padding: 1.1rem 3rem;               /* wider button */
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: var(--cpw-radius);
+    cursor: pointer;
+    transition: all .3s ease;
+    box-shadow: 0 6px 18px rgba(255, 109, 0, .35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cpw-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,.25);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width .4s, height .4s;
+  }
+
+  .cpw-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(255, 109, 0, .45);
+  }
+
+  .cpw-btn:active::after {
+    width: 350px;
+    height: 350px;
+  }
+
+  @keyframes cpwFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Mobile: full width under 480px */
+  @media (max-width: 480px) {
+    .cpw-form {
+      padding: 2.5rem 2rem;
+      max-width: 100%;
+    }
+    .cpw-btn {
+      width: 100%;
+      padding: 1.2rem;
+    }
+  }
+</style>
+
+<script>
+  // Optional: live confirm-password match indicator
+  document.querySelectorAll('.cpw-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const newPw = document.querySelector('input[name="New Password"]');
+      const confirmPw = document.querySelector('input[name="Confirm Password"]');
+      if (newPw.value && confirmPw.value) {
+        confirmPw.style.borderColor = newPw.value === confirmPw.value ? '#28a745' : '#dc3545';
+      }
+    });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'expert/expert_index.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Tip</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/myapp/Add_newtippost/">{% csrf_token %}
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="tip" class="form-label">Tip</label>
+                            <input type="text" class="form-control" id="tip" name="tip" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="details" class="form-label">Details</label>
+                            <textarea class="form-control" id="details" name="details" rows="4" required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Add Tip</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

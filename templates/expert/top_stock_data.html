@@ -1,0 +1,285 @@
+{% extends 'expert/expert_index.html' %}
+{% block body %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Top Stock Predictions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ──────────────────────  PREFIXED ROOT  ────────────────────── */
+    :root {
+      --tsp-bg: #FFF8F0;               /* light orange tint   */
+      --tsp-card: #FFFFFF;             /* pure white          */
+      --tsp-surface: rgba(255,255,255,.85);
+      --tsp-primary: #EF6C00;          /* deep orange         */
+      --tsp-primary-light: #FF8A65;
+      --tsp-success: #10B981;
+      --tsp-danger: #EF4444;
+      --tsp-text: #1F2937;
+      --tsp-muted: #6B7280;
+      --tsp-border: #E5E7EB;
+      --tsp-shadow: 0 20px 40px rgba(0,0,0,.08);
+      --tsp-radius: 1.5rem;
+      --tsp-grad: linear-gradient(135deg,#FF8A65,#EF6C00);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    .tsp-wrapper {                     /* replaces body */
+      font-family:'Inter',system-ui,sans-serif;
+      background:var(--tsp-bg);
+      color:var(--tsp-text);
+      line-height:1.6;
+      padding:2rem 1rem;
+      min-height:100vh;
+    }
+
+    .tsp-container { max-width:1100px; margin:0 auto; }
+
+    /* ──────────────────────  HEADER  ────────────────────── */
+    .tsp-header {
+      display:flex; flex-direction:column; gap:.5rem;
+      margin-bottom:2rem; text-align:center;
+    }
+    @media(min-width:768px){
+      .tsp-header{flex-direction:row;justify-content:space-between;align-items:center;text-align:left;}
+    }
+
+    .tsp-title {font-size:1.75rem;font-weight:700;color:var(--tsp-primary);margin:0;}
+    .tsp-subtitle {font-size:.95rem;color:var(--tsp-muted);}
+
+    .tsp-controls {
+      display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; justify-content:center;
+    }
+    @media(min-width:768px){.tsp-controls{justify-content:flex-end;}}
+
+    /* ──────────────────────  BUTTONS  ────────────────────── */
+    .tsp-btn {
+      background:var(--tsp-surface); border:1.5px solid var(--tsp-border);
+      color:var(--tsp-text); padding:.65rem 1.25rem; border-radius:1rem;
+      font-size:.9rem; font-weight:600; cursor:pointer;
+      transition:all .3s ease; display:inline-flex; align-items:center; gap:.5rem;
+      backdrop-filter:blur(8px);
+    }
+    .tsp-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(239,108,0,.2);}
+    .tsp-btn-primary{
+      background:var(--tsp-grad); color:#fff; border:none;
+      box-shadow:0 6px 16px rgba(239,108,0,.3);
+    }
+    .tsp-btn-primary:hover{box-shadow:0 10px 24px rgba(239,108,0,.4);}
+    .tsp-btn-auto-on{background:var(--tsp-success);color:#fff;animation:tspPulse 2s infinite;}
+    @keyframes tspPulse{0%,100%{opacity:1}50%{opacity:.8}}
+
+    /* ──────────────────────  CARD  ────────────────────── */
+    .tsp-card{
+      background:var(--tsp-card); border-radius:var(--tsp-radius);
+      overflow:hidden; box-shadow:var(--tsp-shadow);
+      animation:tspFade .7s ease-out;
+    }
+    .tsp-card-header{
+      padding:1.5rem 2rem; background:var(--tsp-grad); color:#fff;
+      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    }
+    .tsp-card-header .tsp-info{font-size:.9rem;opacity:.95;}
+    .tsp-card-body{padding:2rem;}
+
+    /* ──────────────────────  TABLE  ────────────────────── */
+    .tsp-table{width:100%;border-collapse:collapse;font-size:.95rem;}
+    .tsp-th{
+      text-align:left;padding:1rem .75rem;font-weight:600;color:var(--tsp-muted);
+      text-transform:uppercase;font-size:.8rem;letter-spacing:.05em;
+      border-bottom:2px solid var(--tsp-primary);
+    }
+    .tsp-td{padding:1.1rem .75rem;border-bottom:1px solid var(--tsp-border);vertical-align:middle;}
+    .tsp-tr:hover{
+      background:linear-gradient(90deg,#FFF8F0 0%,#FFF 100%);
+      transform:translateY(-1px);transition:all .2s ease;
+    }
+
+    .tsp-symbol{font-weight:700;color:var(--tsp-primary);font-family:'Courier New',monospace;}
+    .tsp-price{font-weight:700;font-family:'Courier New',monospace;}
+    .tsp-trend{font-weight:600;display:flex;align-items:center;gap:.4rem;}
+    .tsp-trend-up{color:var(--tsp-success);}
+    .tsp-trend-down{color:var(--tsp-danger);}
+    .tsp-arrow{font-size:1.1rem;animation:tspBounce 1.5s infinite;}
+    @keyframes tspBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+    /* ──────────────────────  SKELETON  ────────────────────── */
+    .tsp-skeleton{
+      background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);
+      background-size:200% 100%;animation:tspLoad 1.5s infinite;border-radius:.5rem;
+    }
+    @keyframes tspLoad{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .tsp-skeleton-text{height:16px;width:80%;}
+    .tsp-skeleton-price{height:18px;width:60%;}
+
+    /* ──────────────────────  EMPTY  ────────────────────── */
+    .tsp-empty{padding:3rem 1rem;text-align:center;color:var(--tsp-muted);font-style:italic;}
+
+    /* ──────────────────────  RESPONSIVE  ────────────────────── */
+    @media(max-width:768px){
+      .tsp-card-header{flex-direction:column;text-align:center;}
+      .tsp-table,.tsp-table thead,.tsp-table tbody,
+      .tsp-th,.tsp-td,.tsp-tr{display:block;}
+      .tsp-table thead tr{position:absolute;top:-9999px;left:-9999px;}
+      .tsp-tr{
+        border:1px solid var(--tsp-border);border-radius:1rem;
+        margin-bottom:1.5rem;padding:1.5rem;background:#fff;
+        box-shadow:0 6px 16px rgba(0,0,0,.06);
+      }
+      .tsp-td{
+        border:none;position:relative;padding-left:50%;text-align:right;
+      }
+      .tsp-td::before{
+        content:attr(data-label);position:absolute;left:1.5rem;
+        width:45%;font-weight:600;color:var(--tsp-primary);text-align:left;
+      }
+      .tsp-th{display:none;}
+    }
+
+    @keyframes tspFade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+
+<body class="tsp-wrapper">
+
+  <div class="tsp-container">
+
+    <!-- Header -->
+    <header class="tsp-header">
+      <div>
+        <h1 class="tsp-title">Top Stock Predictions</h1>
+        <div class="tsp-subtitle">AI-powered linear regression forecasts</div>
+      </div>
+      <div class="tsp-controls">
+        <div id="tspStatus" class="tsp-muted">Idle</div>
+        <button id="tspRefreshBtn" class="tsp-btn">Refresh</button>
+        <button id="tspAutoToggle" class="tsp-btn tsp-btn-primary">Auto: OFF</button>
+      </div>
+    </header>
+
+    <!-- Card -->
+    <div class="tsp-card">
+      <div class="tsp-card-header">
+        <div class="tsp-info">
+           <span id="tspEndpoint" class="tsp-nowrap"></span>
+        </div>
+        <div class="tsp-info">
+          Last updated: <span id="tspLastUpdated">—</span>
+        </div>
+      </div>
+
+      <div class="tsp-card-body">
+        <table id="tspTable" class="tsp-table" aria-live="polite">
+          <thead>
+            <tr>
+              <th class="tsp-th">Symbol</th>
+              <th class="tsp-th">Company</th>
+              <th class="tsp-th">Current</th>
+              <th class="tsp-th">Predicted</th>
+              <th class="tsp-th">Trend</th>
+            </tr>
+          </thead>
+          <tbody id="tspTbody">
+            <tr><td colspan="5" class="tsp-empty">Click "Refresh" to load predictions.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const endpoint = '/myapp/TopStockPredictions/';
+    document.getElementById('tspEndpoint').textContent = endpoint;
+
+    const statusEl      = document.getElementById('tspStatus');
+    const lastUpdatedEl = document.getElementById('tspLastUpdated');
+    const tbody         = document.getElementById('tspTbody');
+    const refreshBtn    = document.getElementById('tspRefreshBtn');
+    const autoToggle    = document.getElementById('tspAutoToggle');
+
+    let auto = false, autoInterval = null;
+
+    function setStatus(txt, loading = false){
+      statusEl.textContent = txt;
+      statusEl.classList.toggle('tsp-skeleton', loading);
+    }
+
+    function showSkeleton(){
+      tbody.innerHTML = Array(5).fill().map(() => `
+        <tr>
+          <td><div class="tsp-skeleton tsp-skeleton-text"></div></td>
+          <td><div class="tsp-skeleton tsp-skeleton-text" style="width:70%"></div></td>
+          <td><div class="tsp-skeleton tsp-skeleton-price"></div></td>
+          <td><div class="tsp-skeleton tsp-skeleton-price"></div></td>
+          <td><div class="tsp-skeleton" style="width:40px;height:20px;"></div></td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadData(){
+      setStatus('Fetching...', true);
+      showSkeleton();
+      const t0 = performance.now();
+
+      try{
+        const res = await fetch(endpoint, {cache:'no-store'});
+        const t1 = performance.now();
+        const ms = Math.round(t1-t0);
+
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        if(json.status!=='ok') throw new Error(json.message||'Server error');
+
+        render(json.data);
+        lastUpdatedEl.textContent = new Date().toLocaleString();
+        setStatus(`OK — ${ms} ms`);
+      }catch(err){
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="5" class="tsp-empty">Error: ${err.message}</td></tr>`;
+        setStatus('Failed');
+      }
+    }
+
+    function render(items){
+      if(!items||items.length===0){
+        tbody.innerHTML = '<tr><td colspan="5" class="tsp-empty">No predictions available.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '';
+      items.forEach(it=>{
+        const tr = document.createElement('tr');
+        const trendCls = it.trend==='up' ? 'tsp-trend-up' : 'tsp-trend-down';
+        const arrow = it.trend==='up' ? 'Up' : 'Down';
+
+        tr.innerHTML = `
+          <td class="tsp-symbol" data-label="Symbol:">${escape(it.symbol)}</td>
+          <td data-label="Company:">${escape(it.name||'—')}</td>
+          <td class="tsp-price" data-label="Current:">$${fmt(it.current_price)}</td>
+          <td class="tsp-price" data-label="Predicted:">$${fmt(it.predicted_price)}</td>
+          <td class="tsp-trend ${trendCls}" data-label="Trend:">
+            <span class="tsp-arrow">${arrow}</span> ${escape(it.trend)}
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    const fmt = v => v==null ? '—' : Number(v).toFixed(2);
+    const escape = s => { if(!s) return ''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; };
+
+    refreshBtn.addEventListener('click', loadData);
+    autoToggle.addEventListener('click',()=>{
+      auto=!auto;
+      autoToggle.textContent = `Auto: ${auto?'ON':'OFF'}`;
+      autoToggle.classList.toggle('tsp-btn-auto-on',auto);
+      if(auto){ loadData(); autoInterval=setInterval(loadData,15000); }
+      else clearInterval(autoInterval);
+    });
+
+    // optional auto-load
+    // loadData();
+  </script>
+</body>
+
+{% endblock %}

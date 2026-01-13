@@ -1,0 +1,308 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="afbk-wrapper">
+    <div class="afbk-container">
+      <div class="afbk-card">
+        <!-- Header -->
+        <div class="afbk-header">
+          <h2 class="afbk-title">User Feedback</h2>
+          <div class="afbk-subtitle">What Our Users Say</div>
+        </div>
+
+        <!-- Table -->
+        <div class="afbk-body">
+          <div class="afbk-table-wrapper">
+            <table class="afbk-table">
+              <thead>
+                <tr>
+                  <th>SI. No</th>
+                  <th>Date</th>
+                  <th>From</th>
+                  <th>Feedback</th>
+                  <th>Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in data %}
+                <tr class="afbk-row">
+                  <td class="afbk-sino">{{ forloop.counter }}</td>
+                  <td class="afbk-date">{{ i.date }}</td>
+                  <td class="afbk-user">{{ i.USER.name }}</td>
+                  <td class="afbk-feedback">{{ i.feedback }}</td>
+                  <td class="afbk-rating">
+                    <div class="afbk-stars" data-rating="{{ i.rating }}"></div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="afbk-empty">
+                    <div class="afbk-empty-state">
+                      <p>No feedback received yet.</p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (afbk- prefix) ============== -->
+<style>
+  :root {
+    --afbk-bg: #f8f9fa;
+    --afbk-surface: #ffffff;
+    --afbk-primary: #ff6d00;
+    --afbk-primary-light: #ff8a00;
+    --afbk-star-filled: #ff6d00;
+    --afbk-star-empty: #e9ecef;
+    --afbk-text: #212529;
+    --afbk-muted: #6c757d;
+    --afbk-border: #dee2e6;
+    --afbk-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+    --afbk-radius: 1.5rem;
+    --afbk-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .afbk-wrapper {
+    min-height: 100vh;
+    background: var(--afbk-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .afbk-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .afbk-card {
+    background: var(--afbk-surface);
+    border-radius: var(--afbk-radius);
+    overflow: hidden;
+    box-shadow: var(--afbk-shadow);
+    animation: afbkFadeIn 0.7s ease-out;
+  }
+
+  /* Header */
+  .afbk-header {
+    padding: 2.5rem 3rem;
+    background: var(--afbk-grad);
+    color: white;
+    text-align: center;
+  }
+
+  .afbk-title {
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .afbk-subtitle {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  /* Body */
+  .afbk-body {
+    padding: 2.5rem 3rem;
+  }
+
+  .afbk-table-wrapper {
+    overflow-x: auto;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  }
+
+  .afbk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.96rem;
+  }
+
+  .afbk-table th {
+    background: #f8f9fa;
+    color: var(--afbk-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    padding: 1.4rem 1rem;
+    text-align: left;
+    border-bottom: 2.5px solid var(--afbk-primary);
+  }
+
+  .afbk-table td {
+    padding: 1.4rem 1rem;
+    border-bottom: 1px solid var(--afbk-border);
+    vertical-align: middle;
+  }
+
+  .afbk-row:hover {
+    background: linear-gradient(90deg, #fff8f0 0%, #ffffff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .1);
+    transition: all 0.25s ease;
+  }
+
+  .afbk-sino {
+    font-weight: 600;
+    color: var(--afbk-primary);
+  }
+
+  .afbk-date {
+    color: var(--afbk-muted);
+    font-size: 0.94rem;
+  }
+
+  .afbk-user {
+    font-weight: 600;
+    color: var(--afbk-text);
+  }
+
+  .afbk-feedback {
+    color: var(--afbk-muted);
+    line-height: 1.6;
+    max-width: 400px;
+    word-wrap: break-word;
+  }
+
+  .afbk-rating {
+    text-align: center;
+  }
+
+  .afbk-stars {
+    display: inline-flex;
+    gap: 0.25rem;
+  }
+
+  .afbk-star {
+    width: 20px;
+    height: 20px;
+    background: var(--afbk-star-empty);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    transition: all 0.2s ease;
+  }
+
+  .afbk-star.filled {
+    background: var(--afbk-star-filled);
+  }
+
+  .afbk-row:hover .afbk-star.filled {
+    transform: scale(1.15);
+    box-shadow: 0 0 8px rgba(255, 109, 0, .5);
+  }
+
+  .afbk-empty {
+    padding: 5rem 1rem !important;
+    text-align: center;
+  }
+
+  .afbk-empty-state p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--afbk-muted);
+    font-style: italic;
+  }
+
+  @keyframes afbkFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .afbk-header {
+      padding: 2rem;
+    }
+    .afbk-title { font-size: 1.8rem; }
+    .afbk-subtitle { font-size: 1rem; }
+  }
+
+  @media (max-width: 768px) {
+    .afbk-table,
+    .afbk-table thead,
+    .afbk-table tbody,
+    .afbk-table th,
+    .afbk-table td,
+    .afbk-table tr {
+      display: block;
+    }
+
+    .afbk-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .afbk-row {
+      border: 1px solid var(--afbk-border);
+      border-radius: 1.2rem;
+      margin-bottom: 1.8rem;
+      padding: 1.8rem;
+      background: white;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1);
+    }
+
+    .afbk-row td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .afbk-row td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 1.5rem;
+      width: 45%;
+      font-weight: 600;
+      color: var(--afbk-primary);
+      text-align: left;
+    }
+
+    .afbk-rating {
+      padding-left: 1.5rem !important;
+      text-align: center !important;
+    }
+
+    .afbk-rating::before { content: "Rating:"; }
+  }
+</style>
+
+<!-- ============== STAR RATING SCRIPT ============== -->
+<script>
+  document.querySelectorAll('.afbk-stars').forEach(stars => {
+    const rating = parseInt(stars.getAttribute('data-rating')) || 0;
+    const max = 5;
+
+    for (let i = 1; i <= max; i++) {
+      const star = document.createElement('div');
+      star.className = 'afbk-star';
+      if (i <= rating) star.classList.add('filled');
+      stars.appendChild(star);
+    }
+  });
+
+  // Mobile data-labels
+  document.querySelectorAll('.afbk-row td').forEach(td => {
+    const headers = ['SI. No', 'Date', 'From', 'Feedback', 'Rating'];
+    const index = Array.from(td.parentNode.children).indexOf(td);
+    if (index < headers.length) {
+      td.setAttribute('data-label', headers[index] + ':');
+    }
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends 'admin_module/index.html' %}
+{% block body %}
+
+<body>
+  <div class="cpt-wrapper">
+    <div class="cpt-container">
+      <table class="cpt-table">
+        <thead>
+          <tr>
+            <th>SI.no</th>
+            <th>Name</th>
+            <th>Photo</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Since</th>
+            <th>Proof</th>
+            <th>Verify</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in data %}
+          <tr class="cpt-row">
+            <td>{{ forloop.counter }}</td>
+            <td class="cpt-name">{{ i.name }}</td>
+            <td class="cpt-photo">
+              <img src="{{ i.photo.url }}" alt="{{ i.name }}" class="cpt-img">
+            </td>
+            <td>{{ i.email }}</td>
+            <td>{{ i.phone }}</td>
+            <td class="cpt-address">
+              {{ i.place }}<br>
+              {{ i.district }}<br>
+              {{ i.pincode }}<br>
+              {{ i.state }}
+            </td>
+            <td>{{ i.sinceyear }}</td>
+            <td>
+              <a href="{{ i.proof.url }}" target="_blank" class="cpt-link">View Proof</a>
+            </td>
+            <td class="cpt-actions">
+              {% if i.status == 'pending' %}
+                <a href="/myapp/AcceptCompany/{{i.id}}/" class="cpt-btn cpt-btn-accept">Accept</a>
+                <a href="/myapp/RejectCompany/{{i.id}}/" class="cpt-btn cpt-btn-reject">Reject</a>
+              {% elif i.status == 'Accepted' %}
+                <span class="cpt-status cpt-status-accepted">Accepted</span>
+              {% else %}
+                <span class="cpt-status cpt-status-rejected">Rejected</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="/myapp/view_stock/{{i.id}}/#about" class="cpt-link cpt-link-stock">View Stock</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (cpt- prefix) ============== -->
+<style>
+  :root {
+    --cpt-bg: #f8f9fa;
+    --cpt-surface: #ffffff;
+    --cpt-primary: #ff6d00;
+    --cpt-primary-light: #ff8a00;
+    --cpt-success: #28a745;
+    --cpt-danger: #dc3545;
+    --cpt-text: #212529;
+    --cpt-muted: #6c757d;
+    --cpt-border: #dee2e6;
+    --cpt-shadow: 0 12px 32px rgba(0,0,0,.1);
+    --cpt-radius: 1rem;
+    --cpt-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .cpt-wrapper {
+    min-height: 100vh;
+    background: var(--cpt-bg);
+    padding: 2rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .cpt-container {
+    background: var(--cpt-surface);
+    border-radius: var(--cpt-radius);
+    box-shadow: var(--cpt-shadow);
+    overflow: hidden;
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: cptFadeIn 0.6s ease-out;
+  }
+
+  .cpt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .cpt-table thead {
+    background: var(--cpt-grad);
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .cpt-table th,
+  .cpt-table td {
+    padding: 1.1rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--cpt-border);
+  }
+
+  .cpt-table th {
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .cpt-row:hover {
+    background: #fff8f0;
+    transform: scale(1.005);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 109, 0, .1);
+  }
+
+  .cpt-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    transition: transform .3s ease;
+  }
+
+  .cpt-img:hover {
+    transform: scale(1.15);
+  }
+
+  .cpt-name {
+    font-weight: 600;
+    color: var(--cpt-text);
+  }
+
+  .cpt-address {
+    font-size: 0.9rem;
+    color: var(--cpt-muted);
+    line-height: 1.5;
+  }
+
+  .cpt-link {
+    color: var(--cpt-primary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    transition: all .2s ease;
+  }
+
+  .cpt-link:hover {
+    background: rgba(255, 109, 0, .1);
+    color: var(--cpt-primary-light);
+  }
+
+  .cpt-link-stock {
+    color: #495057;
+    font-weight: 600;
+  }
+
+  .cpt-link-stock:hover {
+    color: var(--cpt-primary);
+  }
+
+  .cpt-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0.2rem;
+    border-radius: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .25s ease;
+    min-width: 70px;
+    text-align: center;
+  }
+
+  .cpt-btn-accept {
+    background: #d4edda;
+    color: var(--cpt-success);
+    border: 1px solid #c3e6cb;
+  }
+
+  .cpt-btn-accept:hover {
+    background: var(--cpt-success);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .cpt-btn-reject {
+    background: #f8d7da;
+    color: var(--cpt-danger);
+    border: 1px solid #f5c6cb;
+  }
+
+  .cpt-btn-reject:hover {
+    background: var(--cpt-danger);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .cpt-status {
+    padding: 0.5rem 1rem;
+    border-radius: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .cpt-status-accepted {
+    background: #d4edda;
+    color: var(--cpt-success);
+  }
+
+  .cpt-status-rejected {
+    background: #f8d7da;
+    color: var(--cpt-danger);
+  }
+
+  @keyframes cptFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive: Stack on small screens */
+  @media (max-width: 992px) {
+    .cpt-table {
+      font-size: 0.85rem;
+    }
+    .cpt-table th,
+    .cpt-table td {
+      padding: 0.8rem 0.6rem;
+    }
+    .cpt-img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cpt-table,
+    .cpt-table thead,
+    .cpt-table tbody,
+    .cpt-table th,
+    .cpt-table td,
+    .cpt-table tr {
+      display: block;
+    }
+
+    .cpt-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .cpt-row {
+      border: 1px solid var(--cpt-border);
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+
+    .cpt-row td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+    }
+
+    .cpt-row td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 1rem;
+      width: 45%;
+      font-weight: 600;
+      color: var(--cpt-primary);
+      text-align: left;
+    }
+
+    .cpt-photo,
+    .cpt-actions {
+      padding-left: 1rem !important;
+    }
+
+    .cpt-photo::before { content: "Photo:"; }
+    .cpt-actions::before { content: "Action:"; }
+  }
+</style>
+
+<!-- Optional: Add data-labels for mobile view -->
+<script>
+  document.querySelectorAll('.cpt-row td').forEach(td => {
+    const headers = ['SI.no', 'Name', 'Photo', 'Email', 'Phone', 'Address', 'Since', 'Proof', 'Verify', 'Stock'];
+    const index = Array.from(td.parentNode.children).indexOf(td);
+    if (index < headers.length) {
+      td.setAttribute('data-label', headers[index]);
+    }
+  });
+</script>
+
+{% endblock %}

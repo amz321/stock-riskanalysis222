@@ -1,0 +1,493 @@
+{% extends 'expert/expert_index.html' %}
+{% block body %}
+
+<body>
+  <div class="edbt-wrapper">
+    <div class="edbt-container">
+      <div class="edbt-card">
+        <!-- Header -->
+        <div class="edbt-header">
+          <h2 class="edbt-title">User Doubts</h2>
+          <div class="edbt-subtitle">Answer & Guide</div>
+        </div>
+
+        <!-- Table -->
+        <div class="edbt-body">
+          <div class="edbt-table-wrapper">
+            <table class="edbt-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Doubt</th>
+                  <th>Date</th>
+                  <th>Reply</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in data %}
+                <tr class="edbt-row">
+                  <td class="edbt-user">{{ i.USER.name }}</td>
+                  <td class="edbt-doubt">{{ i.doubt }}</td>
+                  <td class="edbt-date">{{ i.date }}</td>
+                  <td class="edbt-action">
+                      {% if i.reply == 'pending' %}
+                    <button class="edbt-btn-reply"
+                            data-id="{{ i.id }}"
+                            data-user="{{ i.USER.name }}"
+                            data-doubt="{{ i.doubt }}">
+                      Reply
+                    </button>
+                      {% else %}
+                      {{i.reply}}
+                      {% endif %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="edbt-empty">
+                    <div class="edbt-empty-state">
+                      <p>No doubts raised yet.</p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reply Modal -->
+  <div class="edbt-modal" id="replyModal">
+    <div class="edbt-modal-content">
+      <div class="edbt-modal-header">
+        <h3>Send Reply</h3>
+        <button class="edbt-close" id="closeModal">×</button>
+      </div>
+
+      <form action="" method="post" class="edbt-form" id="replyForm">
+        {% csrf_token %}
+        <input type="hidden" name="doubt_id" id="doubtId">
+
+        <div class="edbt-modal-body">
+          <div class="edbt-info">
+            <p><strong>User:</strong> <span id="modalUser"></span></p>
+            <p><strong>Doubt:</strong> <span id="modalDoubt"></span></p>
+          </div>
+
+          <div class="edbt-field">
+            <label class="edbt-label">Your Reply <span class="edbt-req">*</span></label>
+            <textarea name="reply" id="replyText" class="edbt-textarea" rows="5" maxlength="1000" required></textarea>
+            <div class="edbt-counter" id="replyCounter">0 / 1000</div>
+            <span class="edbt-error"></span>
+          </div>
+        </div>
+
+        <div class="edbt-modal-footer">
+          <button type="button" class="edbt-btn-cancel" id="cancelModal">Cancel</button>
+          <button type="submit" class="edbt-btn-submit">Send Reply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+<!-- ============== STUNNING & ISOLATED STYLES (edbt- prefix) ============== -->
+<style>
+  :root {
+    --edbt-bg: #f8f9fa;
+    --edbt-surface: #ffffff;
+    --edbt-primary: #ff6d00;
+    --edbt-primary-light: #ff8a00;
+    --edbt-success: #28a745;
+    --edbt-danger: #dc3545;
+    --edbt-text: #212529;
+    --edbt-muted: #6c757d;
+    --edbt-border: #dee2e6;
+    --edbt-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+    --edbt-radius: 1.5rem;
+    --edbt-grad: linear-gradient(135deg, #ff8a00, #ff6d00);
+  }
+
+  .edbt-wrapper {
+    min-height: 100vh;
+    background: var(--edbt-bg);
+    padding: 3rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .edbt-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .edbt-card {
+    background: var(--edbt-surface);
+    border-radius: var(--edbt-radius);
+    overflow: hidden;
+    box-shadow: var(--edbt-shadow);
+    animation: edbtFadeIn 0.7s ease-out;
+  }
+
+  .edbt-header {
+    padding: 2.5rem 3rem;
+    background: var(--edbt-grad);
+    color: white;
+    text-align: center;
+  }
+
+  .edbt-title {
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 700;
+  }
+
+  .edbt-subtitle {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .edbt-body {
+    padding: 2.5rem 3rem;
+  }
+
+  .edbt-table-wrapper {
+    overflow-x: auto;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+  }
+
+  .edbt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.96rem;
+  }
+
+  .edbt-table th {
+    background: #f8f9fa;
+    color: var(--edbt-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    padding: 1.4rem 1rem;
+    text-align: left;
+    border-bottom: 2.5px solid var(--edbt-primary);
+  }
+
+  .edbt-table td {
+    padding: 1.4rem 1rem;
+    border-bottom: 1px solid var(--edbt-border);
+    vertical-align: middle;
+  }
+
+  .edbt-row:hover {
+    background: linear-gradient(90deg, #fff8f0 0%, #ffffff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 109, 0, .1);
+    transition: all 0.25s ease;
+  }
+
+  .edbt-user {
+    font-weight: 600;
+    color: var(--edbt-text);
+  }
+
+  .edbt-doubt {
+    color: var(--edbt-muted);
+    line-height: 1.6;
+    max-width: 400px;
+    word-wrap: break-word;
+  }
+
+  .edbt-date {
+    color: var(--edbt-muted);
+    font-size: 0.94rem;
+  }
+
+  .edbt-action {
+    text-align: center;
+  }
+
+  .edbt-btn-reply {
+    background: var(--edbt-success);
+    color: white;
+    border: none;
+    padding: 0.55rem 1.2rem;
+    border-radius: 0.7rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, .2);
+  }
+
+  .edbt-btn-reply:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(40, 167, 69, .3);
+  }
+
+  .edbt-empty {
+    padding: 5rem 1rem !important;
+    text-align: center;
+  }
+
+  .edbt-empty-state p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--edbt-muted);
+    font-style: italic;
+  }
+
+  /* Modal */
+  .edbt-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .edbt-modal.active {
+    display: flex;
+  }
+
+  .edbt-modal-content {
+    background: var(--edbt-surface);
+    border-radius: var(--edbt-radius);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--edbt-shadow);
+    animation: modalFadeIn 0.4s ease-out;
+  }
+
+  .edbt-modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--edbt-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--edbt-grad);
+    color: white;
+  }
+
+  .edbt-modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .edbt-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+
+  .edbt-close:hover {
+    background: rgba(255,255,255,.2);
+  }
+
+  .edbt-modal-body {
+    padding: 2rem;
+  }
+
+  .edbt-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--edbt-text);
+  }
+
+  .edbt-info p {
+    margin: 0.4rem 0;
+  }
+
+  .edbt-field {
+    position: relative;
+  }
+
+  .edbt-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: var(--edbt-text);
+  }
+
+  .edbt-req {
+    color: var(--edbt-danger);
+  }
+
+  .edbt-textarea {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid var(--edbt-border);
+    border-radius: calc(var(--edbt-radius) / 1.6);
+    font-size: 1rem;
+    transition: all .3s ease;
+    resize: vertical;
+  }
+
+  .edbt-textarea:focus {
+    outline: none;
+    border-color: var(--edbt-primary);
+    box-shadow: 0 0 0 5px rgba(255, 109, 0, .18);
+  }
+
+  .edbt-textarea.error {
+    border-color: var(--edbt-danger);
+  }
+
+  .edbt-counter {
+    text-align: right;
+    font-size: 0.82rem;
+    color: var(--edbt-muted);
+    margin-top: 0.4rem;
+  }
+
+  .edbt-counter.warning { color: var(--edbt-primary); }
+  .edbt-counter.danger { color: var(--edbt-danger); }
+
+  .edbt-error {
+    color: var(--edbt-danger);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+  }
+
+  .edbt-modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--edbt-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .edbt-btn-cancel,
+  .edbt-btn-submit {
+    padding: 0.8rem 1.8rem;
+    border-radius: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .3s ease;
+  }
+
+  .edbt-btn-cancel {
+    background: #f8f9fa;
+    color: var(--edbt-text);
+    border: 1px solid var(--edbt-border);
+  }
+
+  .edbt-btn-cancel:hover {
+    background: #e9ecef;
+  }
+
+  .edbt-btn-submit {
+    background: var(--edbt-grad);
+    color: white;
+    border: none;
+    box-shadow: 0 6px 18px rgba(255, 109, 0, .3);
+  }
+
+  .edbt-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(255, 109, 0, .4);
+  }
+
+  @keyframes edbtFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @media (max-width: 768px) {
+    .edbt-modal-footer { flex-direction: column; }
+    .edbt-btn-cancel, .edbt-btn-submit { width: 100%; }
+  }
+</style>
+
+<!-- ============== MODAL & REPLY SCRIPT ============== -->
+<script>
+  const modal = document.getElementById('replyModal');
+  const closeBtn = document.getElementById('closeModal');
+  const cancelBtn = document.getElementById('cancelModal');
+  const form = document.getElementById('replyForm');
+  const textarea = document.getElementById('replyText');
+  const counter = document.getElementById('replyCounter');
+
+  // Open modal
+  document.querySelectorAll('.edbt-btn-reply').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.getAttribute('data-id');
+      const user = this.getAttribute('data-user');
+      const doubt = this.getAttribute('data-doubt');
+
+      document.getElementById('doubtId').value = id;
+      document.getElementById('modalUser').textContent = user;
+      document.getElementById('modalDoubt').textContent = doubt;
+      textarea.value = '';
+      updateCounter();
+      modal.classList.add('active');
+      textarea.focus();
+    });
+  });
+
+  // Close modal
+  closeBtn.onclick = cancelBtn.onclick = () => modal.classList.remove('active');
+  window.onclick = (e) => { if (e.target === modal) modal.classList.remove('active'); };
+
+  // Character counter
+  function updateCounter() {
+    const length = textarea.value.length;
+    counter.textContent = `${length} / 1000`;
+    counter.classList.remove('warning', 'danger');
+    if (length > 800) counter.classList.add('warning');
+    if (length >= 1000) counter.classList.add('danger');
+  }
+
+  textarea.addEventListener('input', updateCounter);
+
+  // Form submit
+  form.addEventListener('submit', function(e) {
+    const reply = textarea.value.trim();
+    if (!reply) {
+      e.preventDefault();
+      alert('Please enter a reply.');
+      return;
+    }
+    if (reply.length < 10) {
+      e.preventDefault();
+      alert('Reply must be at least 10 characters.');
+      return;
+    }
+    // Set form action dynamically
+    const id = document.getElementById('doubtId').value;
+    this.action = `/myapp/expert_send_reply/${id}/`;
+  });
+</script>
+
+{% endblock %}
