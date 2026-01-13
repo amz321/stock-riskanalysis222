@@ -45,13 +45,13 @@ def loginpost(request):
             else:
                 print('brrr')
                 messages.warning(request,'You are not Approved yet.')
-                return redirect('/myapp/')
+                return redirect('/')
         else:
             messages.warning(request,"invalid username or password")
-            return redirect('/myapp/')
+            return redirect('/')
     else:
         messages.warning(request, "invalid username or password")
-        return redirect('/myapp/')
+        return redirect('/')
 
 def add_expert(request):
     return render(request,'admin_module/expert.html')
