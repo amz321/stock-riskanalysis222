@@ -7,7 +7,6 @@ urlpatterns=[
     path('adminhome/',views.admin_home),
     path('add_expertpost',views.add_expertpost),
 
-    path('', views.login_get),
     path('login_post/', views.loginpost),
     path('add_expert/', views.add_expert),
     path('view_expert/', views.view_expert),
